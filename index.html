@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Моя косметика</title>
+<title>skinstuff</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -59,7 +59,6 @@
     letter-spacing: 1.5px;
     font-weight: 500;
     text-align: left;
-    user-select: none;
   }
   thead th.img-head { text-align: center; width: 96px; }
   thead th.drag-head { width: 32px; }
@@ -67,21 +66,13 @@
   tbody tr {
     border-bottom: 1px solid #f0ece6;
     transition: background 0.12s;
-    user-select: text;
-    -webkit-user-select: text;
   }
   tbody tr:last-child { border-bottom: none; }
   tbody tr:hover { background: #faf8f5; }
   tbody tr.dragging { opacity: 0.4; background: #f0ece6; }
   tbody tr.drag-over { background: #eef5ff; border-top: 2px solid #7aaaff; }
 
-  td {
-    padding: 12px 16px;
-    vertical-align: middle;
-    font-size: 0.86rem;
-    user-select: text;
-    -webkit-user-select: text;
-  }
+  td { padding: 12px 16px; vertical-align: middle; font-size: 0.86rem; }
 
   .drag-handle {
     cursor: grab;
@@ -96,21 +87,24 @@
   .drag-handle:hover { color: #888; }
   .drag-handle:active { cursor: grabbing; }
 
-  .name {
-    font-weight: 600;
-    font-size: 0.9rem;
-    color: #111;
-    user-select: text;
-    -webkit-user-select: text;
+  .name-wrap { display: flex; align-items: center; gap: 7px; }
+  .name { font-weight: 600; font-size: 0.9rem; color: #111; }
+  .brand { font-size: 0.72rem; color: #aaa; display: block; margin-top: 3px; }
+
+  .copy-btn {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 3px;
+    color: #ccc;
+    transition: color 0.15s;
+    display: flex; align-items: center;
+    border-radius: 4px;
   }
-  .brand {
-    font-size: 0.72rem;
-    color: #aaa;
-    display: block;
-    margin-top: 3px;
-    user-select: text;
-    -webkit-user-select: text;
-  }
+  .copy-btn:hover { color: #888; }
+  .copy-btn.copied { color: #4caf50; }
+  .copy-btn svg { width: 14px; height: 14px; }
 
   .img-cell { text-align: center; padding: 8px 4px; width: 96px; }
   .img-wrapper {
@@ -130,50 +124,36 @@
   .img-wrapper:hover { border-color: #ccc; }
   .img-wrapper:hover .img-overlay { opacity: 1; }
   .img-wrapper img { width: 100%; height: 100%; object-fit: contain; padding: 3px; }
-  .img-fallback {
-    font-size: 0.6rem; font-weight: 700; color: #bbb;
-    text-align: center; line-height: 1.4; padding: 6px;
-  }
+  .img-fallback { font-size: 0.6rem; font-weight: 700; color: #bbb; text-align: center; line-height: 1.4; padding: 6px; }
   .img-overlay {
     position: absolute; inset: 0;
     background: rgba(0,0,0,0.45);
     display: flex; align-items: center; justify-content: center;
-    opacity: 0; transition: opacity 0.2s;
-    border-radius: 8px;
+    opacity: 0; transition: opacity 0.2s; border-radius: 8px;
   }
   .img-overlay span { color: #fff; font-size: 0.65rem; font-weight: 600; text-align: center; line-height: 1.4; padding: 4px; }
 
   /* Modal */
   .modal-bg {
-    display: none;
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,0.4);
-    z-index: 1000;
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.4); z-index: 1000;
     align-items: center; justify-content: center;
   }
   .modal-bg.open { display: flex; }
   .modal {
-    background: #fff;
-    border-radius: 14px;
-    padding: 28px 28px 24px;
-    width: 420px;
-    max-width: 95vw;
-    box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+    background: #fff; border-radius: 14px; padding: 28px 28px 24px;
+    width: 420px; max-width: 95vw; box-shadow: 0 8px 40px rgba(0,0,0,0.18);
   }
   .modal h3 { font-size: 1rem; margin-bottom: 6px; }
   .modal p { font-size: 0.8rem; color: #888; margin-bottom: 14px; }
   .modal input {
-    width: 100%; padding: 9px 12px;
-    border: 1.5px solid #e0dbd4;
-    border-radius: 8px; font-size: 0.85rem;
-    outline: none; margin-bottom: 10px;
+    width: 100%; padding: 9px 12px; border: 1.5px solid #e0dbd4;
+    border-radius: 8px; font-size: 0.85rem; outline: none; margin-bottom: 10px;
     font-family: 'DM Sans', sans-serif;
   }
   .modal input:focus { border-color: #a09080; }
   .modal-preview {
-    width: 100%; height: 120px;
-    background: #f5f2ee;
-    border-radius: 8px;
+    width: 100%; height: 120px; background: #f5f2ee; border-radius: 8px;
     display: flex; align-items: center; justify-content: center;
     margin-bottom: 14px; overflow: hidden;
   }
@@ -185,23 +165,13 @@
   .btn-save { background: #1a1a1a; color: #fff; }
   .btn-save:disabled { background: #ccc; cursor: not-allowed; }
 
-  .desc {
-    color: #3a3a3a; line-height: 1.56; font-size: 0.83rem; width: 32%;
-    user-select: text; -webkit-user-select: text;
-  }
+  .desc { color: #3a3a3a; line-height: 1.56; font-size: 0.83rem; width: 32%; }
   .comment-cell { padding: 10px 12px; width: 28%; }
   textarea {
-    width: 100%; min-height: 62px;
-    border: 1.5px solid #e5e1db;
-    border-radius: 8px;
-    padding: 8px 10px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.82rem;
-    color: #333;
-    background: #fdfcfa;
-    resize: vertical; outline: none;
-    transition: border-color 0.2s;
-    line-height: 1.5;
+    width: 100%; min-height: 62px; border: 1.5px solid #e5e1db; border-radius: 8px;
+    padding: 8px 10px; font-family: 'DM Sans', sans-serif; font-size: 0.82rem;
+    color: #333; background: #fdfcfa; resize: vertical; outline: none;
+    transition: border-color 0.2s; line-height: 1.5;
   }
   textarea:focus { border-color: #a09080; background: #fff; }
   textarea::placeholder { color: #ccc; font-style: italic; }
@@ -209,19 +179,19 @@
 </head>
 <body>
 
-<h1>Моя косметика</h1>
-<p class="subtitle">12 средств · уход за кожей</p>
-<p class="sync-status" id="syncStatus">Подключение...</p>
+<h1>skinstuff</h1>
+<p class="subtitle">12 products · skincare routine</p>
+<p class="sync-status" id="syncStatus">Connecting...</p>
 
 <div class="table-wrap">
   <table>
     <thead>
       <tr>
         <th class="drag-head"></th>
-        <th style="width:17%">Название</th>
-        <th class="img-head">Фото</th>
-        <th>Состав / действие</th>
-        <th>Комментарий косметолога</th>
+        <th style="width:18%">Product</th>
+        <th class="img-head">Photo</th>
+        <th>Ingredients / action</th>
+        <th>Cosmetologist notes</th>
       </tr>
     </thead>
     <tbody id="tbody"></tbody>
@@ -230,15 +200,15 @@
 
 <div class="modal-bg" id="modalBg">
   <div class="modal">
-    <h3>Вставить фото</h3>
-    <p>Найди картинку в интернете, нажми правую кнопку мыши → «Копировать адрес изображения» и вставь сюда</p>
+    <h3>Add photo</h3>
+    <p>Find the product image online, right-click → "Copy image address" and paste it below</p>
     <input type="text" id="urlInput" placeholder="https://example.com/product.jpg">
     <div class="modal-preview" id="modalPreview">
-      <span class="ph">Предпросмотр появится здесь</span>
+      <span class="ph">Preview will appear here</span>
     </div>
     <div class="modal-btns">
-      <button class="btn btn-cancel" id="modalCancel">Отмена</button>
-      <button class="btn btn-save" id="modalSave" disabled>Сохранить</button>
+      <button class="btn btn-cancel" id="modalCancel">Cancel</button>
+      <button class="btn btn-save" id="modalSave" disabled>Save</button>
     </div>
   </div>
 </div>
@@ -261,18 +231,18 @@ const db  = getFirestore(app);
 const REF = doc(db, "skincare", "data");
 
 const PRODUCTS = [
-  { id:"anthelios", name:"Anthelios UVMune 400 SPF50+",    brand:"La Roche-Posay",    desc:"SPF50+. Фильтры: Mexoryl 400 (UVA1, до 400нм), Tinosorb S/M (UVA/UVB). Флюид. Без отдушки, без спирта. 50 мл." },
-  { id:"agame",     name:"A-Game⁵ 0.05% Retinal",          brand:"Geek & Gorgeous",   desc:"Ретиналь (ретинальдегид) 0.05%. Альдегидная форма витамина A, прямой предшественник ретиноевой кислоты. 30 мл." },
-  { id:"bbomb",     name:"B-Bomb 10% Niacinamide",          brand:"Geek & Gorgeous",   desc:"Ниацинамид 10% (витамин B3). Ингибирует перенос меланосом, регулирует себопродукцию, укрепляет керамидный барьер. 30 мл." },
-  { id:"apad",      name:"aPAD 20% Azeclair",               brand:"Geek & Gorgeous",   desc:"Азелаиновая кислота 20% (форма Azeclair — потенцированный эфир). Антибактериальное, кератолитическое, депигментирующее действие. 30 мл." },
-  { id:"effezell",  name:"Эффезел гель",                    brand:"Galderma",          desc:"Рецептурный. Адапален 0.1% (ретиноид 3-го поколения) + бензоилпероксид 2.5%. Антикомедонное + антибактериальное." },
-  { id:"retina",    name:"Retin A Renewal Night Cream",     brand:"GIGI Promedic",     desc:"Ретинол (концентрация на упаковке не указана). Ночной крем, профессиональная линия." },
-  { id:"bpo",       name:"Acne Reversing Gel BPO 10%",      brand:"M.A.D Skincare",    desc:"Бензоилпероксид 10%. Антибактериальный окислитель. Высокая концентрация — для точечного нанесения. 30 мл." },
-  { id:"cicaplast", name:"Cicaplast Baume B5+",             brand:"La Roche-Posay",    desc:"Пантенол (B5), мадекассосид, термальная вода LRP. Без отдушки. Восстановление барьера, ранозаживляющее действие." },
-  { id:"calmdown",  name:"Calm Down 3.2% PHA + 0.8% BHA",  brand:"Geek & Gorgeous",   desc:"Глюконолактон 3.2% (PHA) + салициловая кислота 0.8% (BHA). Химический эксфолиант. pH ≈3.5. 100 мл." },
-  { id:"toleriane", name:"Toleriane Sensitive Fluide",      brand:"La Roche-Posay",    desc:"Термальная вода, нейросенсин, глицерин. Без парабенов, без отдушки. Лёгкий флюид. pH ≈5.5. 40 мл." },
-  { id:"cicaspf",   name:"Cicaplast Baume B5+ SPF50",       brand:"La Roche-Posay",    desc:"Пантенол B5 + мадекассосид + SPF50 (химические фильтры). Восстановление + фотозащита. 40 мл." },
-  { id:"klapp",     name:"Körperlotion Body Lotion",         brand:"KLAPP (Ref. 1834)", desc:"Лосьон для тела. Полный состав не раскрыт. KLAPP Cosmetics GmbH, Hessisch Lichtenau, DE." },
+  { id:"anthelios", name:"Anthelios UVMune 400 SPF50+",    brand:"La Roche-Posay",    desc:"SPF50+. Filters: Mexoryl 400 (UVA1, up to 400nm), Tinosorb S/M (UVA/UVB). Fluid texture. Fragrance-free, alcohol-free. 50 ml." },
+  { id:"agame",     name:"A-Game⁵ 0.05% Retinal",          brand:"Geek & Gorgeous",   desc:"Retinal (retinaldehyde) 0.05%. Aldehyde form of vitamin A, direct precursor to retinoic acid. 30 ml." },
+  { id:"bbomb",     name:"B-Bomb 10% Niacinamide",          brand:"Geek & Gorgeous",   desc:"Niacinamide 10% (vitamin B3). Inhibits melanosome transfer, regulates sebum production, strengthens ceramide barrier. 30 ml." },
+  { id:"apad",      name:"aPAD 20% Azeclair",               brand:"Geek & Gorgeous",   desc:"Azelaic acid 20% (Azeclair form — potentiated ester). Antibacterial, keratolytic, depigmenting action. 30 ml." },
+  { id:"effezell",  name:"Effezell Gel",                    brand:"Galderma",          desc:"Prescription. Adapalene 0.1% (3rd-gen retinoid) + benzoyl peroxide 2.5%. Comedolytic + antibacterial." },
+  { id:"retina",    name:"Retin A Renewal Night Cream",     brand:"GIGI Promedic",     desc:"Retinol (concentration not stated on packaging). Night cream, professional line." },
+  { id:"bpo",       name:"Acne Reversing Gel BPO 10%",      brand:"M.A.D Skincare",    desc:"Benzoyl peroxide 10%. Antibacterial oxidizer. High concentration — for spot application. 30 ml." },
+  { id:"cicaplast", name:"Cicaplast Baume B5+",             brand:"La Roche-Posay",    desc:"Panthenol (B5), madecassoside, LRP thermal water. Fragrance-free. Barrier repair, wound-healing action." },
+  { id:"calmdown",  name:"Calm Down 3.2% PHA + 0.8% BHA",  brand:"Geek & Gorgeous",   desc:"Gluconolactone 3.2% (PHA) + salicylic acid 0.8% (BHA). Chemical exfoliant. pH ≈3.5. 100 ml." },
+  { id:"toleriane", name:"Toleriane Sensitive Fluide",      brand:"La Roche-Posay",    desc:"Thermal water, neurosensine, glycerin. Paraben-free, fragrance-free. Light fluid. pH ≈5.5. 40 ml." },
+  { id:"cicaspf",   name:"Cicaplast Baume B5+ SPF50",       brand:"La Roche-Posay",    desc:"Panthenol B5 + madecassoside + SPF50 (chemical filters). Barrier repair + UV protection. 40 ml." },
+  { id:"klapp",     name:"Körperlotion Body Lotion",         brand:"KLAPP (Ref. 1834)", desc:"Body moisturiser. Full ingredient list not disclosed. KLAPP Cosmetics GmbH, Hessisch Lichtenau, DE." },
 ];
 
 const byId = {};
@@ -288,6 +258,9 @@ const urlInput= document.getElementById('urlInput');
 const preview = document.getElementById('modalPreview');
 const saveBtn = document.getElementById('modalSave');
 let activeImgId = null;
+
+const copyIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
+const checkIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
 
 function setStatus(type, text) {
   status.className = 'sync-status ' + type;
@@ -308,17 +281,29 @@ function renderTable() {
     tr.dataset.id = id;
     tr.draggable = true;
 
-    // Drag handle — only this cell triggers drag
+    // Drag handle
     const tdH = document.createElement('td');
     tdH.className = 'drag-handle';
     tdH.innerHTML = '&#8597;';
-    tdH.addEventListener('mousedown', () => tr.draggable = true);
     tr.appendChild(tdH);
 
-    // Name
+    // Name + copy button
     const tdN = document.createElement('td');
-    tdN.innerHTML = `<span class="name">${p.name}</span><span class="brand">${p.brand}</span>`;
-    tdN.addEventListener('mousedown', e => { tr.draggable = false; });
+    tdN.innerHTML = `
+      <div class="name-wrap">
+        <span class="name">${p.name}</span>
+        <button class="copy-btn" title="Copy name">${copyIcon}</button>
+      </div>
+      <span class="brand">${p.brand}</span>`;
+    const copyBtn = tdN.querySelector('.copy-btn');
+    copyBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      navigator.clipboard.writeText(p.name).then(() => {
+        copyBtn.innerHTML = checkIcon;
+        copyBtn.classList.add('copied');
+        setTimeout(() => { copyBtn.innerHTML = copyIcon; copyBtn.classList.remove('copied'); }, 1500);
+      });
+    });
     tr.appendChild(tdN);
 
     // Image
@@ -328,9 +313,9 @@ function renderTable() {
     wrap.className = 'img-wrapper';
     const imgSrc = state.images[id];
     if (imgSrc) {
-      wrap.innerHTML = `<img src="${imgSrc}" alt="${p.name}"><div class="img-overlay"><span>Сменить фото</span></div>`;
+      wrap.innerHTML = `<img src="${imgSrc}" alt="${p.name}"><div class="img-overlay"><span>Change photo</span></div>`;
     } else {
-      wrap.innerHTML = `<span class="img-fallback">${p.brand}</span><div class="img-overlay"><span>Добавить фото</span></div>`;
+      wrap.innerHTML = `<span class="img-fallback">${p.brand}</span><div class="img-overlay"><span>Add photo</span></div>`;
     }
     wrap.addEventListener('click', () => openModal(id));
     tdI.appendChild(wrap);
@@ -340,24 +325,17 @@ function renderTable() {
     const tdD = document.createElement('td');
     tdD.className = 'desc';
     tdD.textContent = p.desc;
-    tdD.addEventListener('mousedown', () => { tr.draggable = false; });
     tr.appendChild(tdD);
 
     // Comment
     const tdC = document.createElement('td');
     tdC.className = 'comment-cell';
     const ta = document.createElement('textarea');
-    ta.placeholder = 'Комментарий…';
+    ta.placeholder = 'Notes…';
     ta.value = state.comments[id] || '';
-    ta.addEventListener('mousedown', e => { tr.draggable = false; e.stopPropagation(); });
     ta.addEventListener('input', () => { state.comments[id] = ta.value; scheduleSave(); });
     tdC.appendChild(ta);
     tr.appendChild(tdC);
-
-    // Re-enable drag only from handle
-    tr.addEventListener('dragstart', e => {
-      if (!tr.draggable) { e.preventDefault(); return; }
-    });
 
     tbody.appendChild(tr);
   });
@@ -365,10 +343,11 @@ function renderTable() {
   initDrag();
 }
 
-// ── Drag ──
+// ── Drag — only from handle ──
 let dragSrc = null;
 function initDrag() {
   tbody.addEventListener('dragstart', e => {
+    if (!e.target.closest('.drag-handle')) { e.preventDefault(); return; }
     dragSrc = e.target.closest('tr');
     if (!dragSrc) return;
     dragSrc.classList.add('dragging');
@@ -376,8 +355,6 @@ function initDrag() {
   });
   tbody.addEventListener('dragend', () => {
     document.querySelectorAll('.dragging,.drag-over').forEach(el => el.classList.remove('dragging','drag-over'));
-    // Re-enable draggable on all rows
-    tbody.querySelectorAll('tr').forEach(r => r.draggable = true);
     dragSrc = null;
   });
   tbody.addEventListener('dragover', e => {
@@ -388,8 +365,7 @@ function initDrag() {
     t.classList.add('drag-over');
   });
   tbody.addEventListener('dragleave', e => {
-    const t = e.target.closest('tr');
-    if (t) t.classList.remove('drag-over');
+    const t = e.target.closest('tr'); if (t) t.classList.remove('drag-over');
   });
   tbody.addEventListener('drop', e => {
     e.preventDefault();
@@ -415,10 +391,10 @@ function openModal(id) {
 }
 function updatePreview(url) {
   if (url.trim()) {
-    preview.innerHTML = `<img src="${url.trim()}" onerror="this.parentNode.innerHTML='<span class=ph>Не удалось загрузить</span>'">`;
+    preview.innerHTML = `<img src="${url.trim()}" onerror="this.parentNode.innerHTML='<span class=ph>Could not load image</span>'">`;
     saveBtn.disabled = false;
   } else {
-    preview.innerHTML = '<span class="ph">Предпросмотр появится здесь</span>';
+    preview.innerHTML = '<span class="ph">Preview will appear here</span>';
     saveBtn.disabled = true;
   }
 }
@@ -435,15 +411,15 @@ modalBg.addEventListener('click', e => { if (e.target === modalBg) { modalBg.cla
 
 // ── Firebase ──
 function scheduleSave() {
-  setStatus('saving', 'Сохранение...');
+  setStatus('saving', 'Saving...');
   clearTimeout(saveTimer);
   saveTimer = setTimeout(async () => {
     try {
       await setDoc(REF, { order: state.order, comments: state.comments, images: state.images, updatedAt: Date.now() });
-      setStatus('saved', 'Сохранено ✓');
+      setStatus('saved', 'Saved ✓');
       setTimeout(() => setStatus('', ''), 2500);
     } catch(e) {
-      setStatus('error', 'Ошибка сохранения');
+      setStatus('error', 'Save failed');
     }
   }, 800);
 }
@@ -454,10 +430,10 @@ onSnapshot(REF, snap => {
   state.order    = data.order    || state.order;
   state.comments = data.comments || {};
   state.images   = data.images   || {};
-  setStatus('saved', 'Синхронизировано ✓');
+  setStatus('saved', 'Synced ✓');
   setTimeout(() => setStatus('', ''), 2000);
   renderTable();
-}, () => setStatus('error', 'Ошибка подключения'));
+}, () => setStatus('error', 'Connection error'));
 
 renderTable();
 </script>
