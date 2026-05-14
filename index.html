@@ -12,20 +12,20 @@
     font-family: 'DM Sans', sans-serif;
     color: #1a1a1a;
     min-height: 100vh;
-    padding: 40px 20px;
+    padding: 24px 12px;
   }
   h1 {
     font-family: 'DM Serif Display', serif;
-    font-size: 2rem;
+    font-size: 1.8rem;
     text-align: center;
-    margin-bottom: 32px;
+    margin-bottom: 24px;
     letter-spacing: -0.5px;
   }
 
-  /* ── skinissues ── */
+  /* skinissues */
   .issues-wrap {
     max-width: 1100px;
-    margin: 0 auto 24px;
+    margin: 0 auto 20px;
   }
   .issues-label {
     font-size: 0.71rem;
@@ -34,7 +34,6 @@
     font-weight: 500;
     color: #b08080;
     margin-bottom: 8px;
-    padding-left: 2px;
   }
   .issues-list {
     display: flex;
@@ -52,102 +51,99 @@
     padding: 6px 10px 6px 12px;
   }
   .issue-input {
-    border: none;
-    background: transparent;
+    border: none; background: transparent;
     font-family: 'DM Sans', sans-serif;
-    font-size: 0.83rem;
-    color: #5a3030;
-    outline: none;
-    width: 160px;
-    min-width: 80px;
+    font-size: 0.83rem; color: #5a3030; outline: none;
+    width: 140px; min-width: 60px;
   }
   .issue-input::placeholder { color: #d0a8a4; font-style: italic; }
   .issue-delete {
     background: none; border: none; cursor: pointer;
     color: #d0a8a4; font-size: 1rem; line-height: 1;
     padding: 0 2px; transition: color 0.15s;
-    display: flex; align-items: center;
   }
   .issue-delete:hover { color: #c0605a; }
   .issue-add {
-    background: none;
-    border: 1.5px dashed #d0b8b4;
-    border-radius: 10px;
-    padding: 6px 12px;
-    cursor: pointer;
-    font-size: 1.1rem;
-    color: #c0907a;
-    transition: border-color 0.15s, color 0.15s;
-    line-height: 1;
+    background: none; border: 1.5px dashed #d0b8b4;
+    border-radius: 10px; padding: 6px 12px; cursor: pointer;
+    font-size: 1.1rem; color: #c0907a;
+    transition: border-color 0.15s, color 0.15s; line-height: 1;
   }
   .issue-add:hover { border-color: #b07870; color: #a05848; }
 
-  /* ── table header ── */
+  /* table header */
   .table-header {
     max-width: 1100px;
     margin: 0 auto 6px;
     display: flex;
     align-items: baseline;
     justify-content: space-between;
+    padding: 0 2px;
   }
   .product-count {
-    font-size: 0.75rem;
-    color: #aaa;
-    font-weight: 500;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    padding-left: 64px;
+    font-size: 0.75rem; color: #aaa;
+    font-weight: 500; letter-spacing: 1px; text-transform: uppercase;
   }
   .sync-status {
-    font-size: 0.75rem;
-    color: #aaa;
-    transition: color 0.3s;
-    height: 18px;
+    font-size: 0.75rem; color: #aaa; transition: color 0.3s; height: 18px;
   }
   .sync-status.saving { color: #f0a500; }
   .sync-status.saved  { color: #4caf50; }
   .sync-status.error  { color: #e53935; }
 
-  /* ── table ── */
+  /* table — responsive */
   .table-wrap {
     max-width: 1100px;
     margin: 0 auto;
     background: #fff;
     border-radius: 16px;
-    overflow: hidden;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
     box-shadow: 0 4px 32px rgba(0,0,0,0.07);
   }
-  table { width: 100%; border-collapse: collapse; }
+  table {
+    width: 100%;
+    min-width: 480px;
+    border-collapse: collapse;
+  }
   thead tr { background: #1a1a1a; color: #fff; }
   thead th {
-    padding: 13px 16px;
-    font-size: 0.71rem;
+    padding: 12px 10px;
+    font-size: 0.68rem;
     text-transform: uppercase;
-    letter-spacing: 1.5px;
+    letter-spacing: 1.2px;
     font-weight: 500;
     text-align: left;
+    white-space: nowrap;
   }
-  thead th.img-head { text-align: center; width: 112px; }
-  thead th.drag-head { width: 32px; }
+  thead th.img-head { text-align: center; width: 90px; }
+  thead th.move-head { width: 52px; text-align: center; }
   tbody tr {
     border-bottom: 1px solid #f0ece6;
     transition: background 0.12s;
   }
   tbody tr:last-child { border-bottom: none; }
   tbody tr:hover { background: #faf8f5; }
-  tbody tr.dragging { opacity: 0.4; background: #f0ece6; }
-  tbody tr.drag-over { background: #eef5ff; border-top: 2px solid #7aaaff; }
-  td { padding: 12px 16px; vertical-align: middle; font-size: 0.86rem; }
-  .drag-handle {
-    cursor: grab; color: #ccc; font-size: 1.1rem;
-    user-select: none; -webkit-user-select: none;
-    text-align: center; padding: 12px 6px; transition: color 0.15s;
+  td { padding: 10px; vertical-align: middle; font-size: 0.84rem; }
+
+  /* move buttons */
+  .move-cell { text-align: center; padding: 6px 4px; white-space: nowrap; }
+  .move-btn {
+    background: none; border: 1px solid #e0dbd4;
+    border-radius: 6px; cursor: pointer;
+    color: #bbb; font-size: 0.8rem;
+    padding: 3px 6px; display: inline-flex;
+    align-items: center; justify-content: center;
+    transition: color 0.15s, border-color 0.15s;
+    margin: 1px;
   }
-  .drag-handle:hover { color: #888; }
-  .drag-handle:active { cursor: grabbing; }
-  .name-wrap { display: flex; align-items: center; gap: 7px; }
-  .name { font-weight: 600; font-size: 0.9rem; color: #111; }
-  .brand { font-size: 0.72rem; color: #aaa; display: block; margin-top: 3px; }
+  .move-btn:hover { color: #555; border-color: #aaa; }
+  .move-btn:disabled { opacity: 0.25; cursor: default; }
+
+  /* name */
+  .name-wrap { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .name { font-weight: 600; font-size: 0.88rem; color: #111; }
+  .brand { font-size: 0.7rem; color: #aaa; display: block; margin-top: 2px; }
   .copy-btn {
     flex-shrink: 0; background: none; border: none; cursor: pointer;
     padding: 3px; color: #ccc; transition: color 0.15s;
@@ -155,26 +151,32 @@
   }
   .copy-btn:hover { color: #888; }
   .copy-btn.copied { color: #4caf50; }
-  .copy-btn svg { width: 14px; height: 14px; }
-  .img-cell { text-align: center; padding: 8px 4px; width: 112px; }
+  .copy-btn svg { width: 13px; height: 13px; }
+
+  /* image */
+  .img-cell { text-align: center; padding: 8px 4px; width: 90px; }
+  .img-area { position: relative; display: inline-flex; flex-direction: column; align-items: center; gap: 5px; }
   .img-wrapper {
-    width: 82px; height: 82px; margin: 0 auto;
+    width: 72px; height: 72px;
     border-radius: 10px; background: #f0ede9;
     display: flex; align-items: center; justify-content: center;
-    overflow: hidden; position: relative; cursor: pointer;
-    border: 2px dashed transparent; transition: border-color 0.2s;
+    overflow: hidden; position: relative;
+    border: 2px solid #ece8e3;
     user-select: none; -webkit-user-select: none;
+    cursor: default;
   }
-  .img-wrapper:hover { border-color: #ccc; }
-  .img-wrapper:hover .img-overlay { opacity: 1; }
   .img-wrapper img { width: 100%; height: 100%; object-fit: contain; padding: 3px; }
-  .img-fallback { font-size: 0.6rem; font-weight: 700; color: #bbb; text-align: center; line-height: 1.4; padding: 6px; }
-  .img-overlay {
-    position: absolute; inset: 0; background: rgba(0,0,0,0.45);
-    display: flex; align-items: center; justify-content: center;
-    opacity: 0; transition: opacity 0.2s; border-radius: 8px;
+  .img-fallback { font-size: 0.55rem; font-weight: 700; color: #bbb; text-align: center; line-height: 1.4; padding: 6px; }
+  .edit-photo-btn {
+    background: #f5f2ee; border: 1px solid #e0dbd4;
+    border-radius: 6px; cursor: pointer;
+    color: #888; font-size: 0.65rem;
+    padding: 3px 7px; display: flex; align-items: center; gap: 3px;
+    transition: color 0.15s, border-color 0.15s;
+    white-space: nowrap;
   }
-  .img-overlay span { color: #fff; font-size: 0.65rem; font-weight: 600; text-align: center; line-height: 1.4; padding: 4px; }
+  .edit-photo-btn:hover { color: #333; border-color: #aaa; }
+  .edit-photo-btn svg { width: 11px; height: 11px; }
 
   /* photo popup */
   .photo-popup {
@@ -184,21 +186,32 @@
     pointer-events: none; display: none;
   }
   .photo-popup.visible { display: block; }
-  .photo-popup img { display: block; max-width: 300px; max-height: 300px; object-fit: contain; border-radius: 6px; }
+  .photo-popup img { display: block; max-width: 200px; max-height: 200px; object-fit: contain; border-radius: 6px; }
+
+  .desc { color: #3a3a3a; line-height: 1.5; font-size: 0.8rem; min-width: 140px; }
+  .comment-cell { padding: 8px 10px; min-width: 140px; }
+  textarea {
+    width: 100%; min-height: 58px; border: 1.5px solid #e5e1db; border-radius: 8px;
+    padding: 7px 9px; font-family: 'DM Sans', sans-serif; font-size: 0.8rem;
+    color: #333; background: #fdfcfa; resize: vertical; outline: none;
+    transition: border-color 0.2s; line-height: 1.5;
+  }
+  textarea:focus { border-color: #a09080; background: #fff; }
+  textarea::placeholder { color: #ccc; font-style: italic; }
 
   /* modal */
   .modal-bg {
     display: none; position: fixed; inset: 0;
     background: rgba(0,0,0,0.4); z-index: 1000;
-    align-items: center; justify-content: center;
+    align-items: center; justify-content: center; padding: 16px;
   }
   .modal-bg.open { display: flex; }
   .modal {
-    background: #fff; border-radius: 14px; padding: 28px 28px 24px;
-    width: 420px; max-width: 95vw; box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+    background: #fff; border-radius: 14px; padding: 24px;
+    width: 100%; max-width: 400px; box-shadow: 0 8px 40px rgba(0,0,0,0.18);
   }
   .modal h3 { font-size: 1rem; margin-bottom: 6px; }
-  .modal p { font-size: 0.8rem; color: #888; margin-bottom: 14px; }
+  .modal p { font-size: 0.78rem; color: #888; margin-bottom: 12px; line-height: 1.5; }
   .modal input {
     width: 100%; padding: 9px 12px; border: 1.5px solid #e0dbd4;
     border-radius: 8px; font-size: 0.85rem; outline: none; margin-bottom: 10px;
@@ -206,43 +219,32 @@
   }
   .modal input:focus { border-color: #a09080; }
   .modal-preview {
-    width: 100%; height: 120px; background: #f5f2ee; border-radius: 8px;
+    width: 100%; height: 110px; background: #f5f2ee; border-radius: 8px;
     display: flex; align-items: center; justify-content: center;
     margin-bottom: 14px; overflow: hidden;
   }
   .modal-preview img { max-width: 100%; max-height: 100%; object-fit: contain; }
   .modal-preview .ph { font-size: 0.75rem; color: #bbb; }
   .modal-btns { display: flex; gap: 8px; justify-content: flex-end; }
-  .btn { padding: 8px 18px; border-radius: 8px; border: none; cursor: pointer; font-size: 0.83rem; font-family: 'DM Sans', sans-serif; font-weight: 500; }
+  .btn { padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer; font-size: 0.83rem; font-family: 'DM Sans', sans-serif; font-weight: 500; }
   .btn-cancel { background: #f0ece6; color: #555; }
   .btn-save { background: #1a1a1a; color: #fff; }
   .btn-save:disabled { background: #ccc; cursor: not-allowed; }
-  .desc { color: #3a3a3a; line-height: 1.56; font-size: 0.83rem; width: 32%; }
-  .comment-cell { padding: 10px 12px; width: 28%; }
-  textarea {
-    width: 100%; min-height: 62px; border: 1.5px solid #e5e1db; border-radius: 8px;
-    padding: 8px 10px; font-family: 'DM Sans', sans-serif; font-size: 0.82rem;
-    color: #333; background: #fdfcfa; resize: vertical; outline: none;
-    transition: border-color 0.2s; line-height: 1.5;
-  }
-  textarea:focus { border-color: #a09080; background: #fff; }
-  textarea::placeholder { color: #ccc; font-style: italic; }
 </style>
 </head>
 <body>
 
 <h1>skinstuff</h1>
 
-<!-- skinissues -->
 <div class="issues-wrap">
   <div class="issues-label">skinissues</div>
   <div class="issues-list" id="issuesList">
-    <button class="issue-add" id="issueAdd" title="Add issue">＋</button>
+    <button class="issue-add" id="issueAdd">＋</button>
   </div>
 </div>
 
 <div class="table-header">
-  <span class="product-count" id="productCount">13 products</span>
+  <span class="product-count" id="productCount"></span>
   <span class="sync-status" id="syncStatus">Connecting...</span>
 </div>
 
@@ -250,8 +252,8 @@
   <table>
     <thead>
       <tr>
-        <th class="drag-head"></th>
-        <th style="width:18%">Product</th>
+        <th class="move-head"></th>
+        <th>Product</th>
         <th class="img-head">Photo</th>
         <th>Ingredients / action</th>
         <th>Cosmetologist notes</th>
@@ -313,145 +315,156 @@ const PRODUCTS = [
   { id:"pyunkang",  name:"Pyunkang Yul Essence Toner",      brand:"Pyunkang Yul",      desc:"Astragalus root extract 91.3%. Hydrating essence-toner. Fragrance-free, dye-free, hypoallergenic. 200 ml." },
 ];
 
+const ALL_IDS = PRODUCTS.map(p => p.id);
 const byId = {};
 PRODUCTS.forEach(p => byId[p.id] = p);
 
-let state = { order: PRODUCTS.map(p => p.id), comments: {}, images: {}, issues: [''] };
-let saveTimer  = null;
-let pressTimer = null;
-let wasLongPress = false;
+function mergeOrder(savedOrder) {
+  const valid = (savedOrder || []).filter(id => byId[id]);
+  const missing = ALL_IDS.filter(id => !valid.includes(id));
+  return [...valid, ...missing];
+}
 
-const tbody    = document.getElementById('tbody');
-const status   = document.getElementById('syncStatus');
-const modalBg  = document.getElementById('modalBg');
-const urlInput = document.getElementById('urlInput');
-const preview  = document.getElementById('modalPreview');
-const saveBtn  = document.getElementById('modalSave');
-const popup    = document.getElementById('photoPopup');
-const popupImg = document.getElementById('photoPopupImg');
+let state = { order: [...ALL_IDS], comments: {}, images: {}, issues: [''] };
+let saveTimer = null;
+
+const tbody      = document.getElementById('tbody');
+const statusEl   = document.getElementById('syncStatus');
+const countEl    = document.getElementById('productCount');
+const modalBg    = document.getElementById('modalBg');
+const urlInput   = document.getElementById('urlInput');
+const preview    = document.getElementById('modalPreview');
+const saveBtn    = document.getElementById('modalSave');
+const popup      = document.getElementById('photoPopup');
+const popupImg   = document.getElementById('photoPopupImg');
 const issuesList = document.getElementById('issuesList');
 const issueAdd   = document.getElementById('issueAdd');
-let activeImgId = null;
+let activeImgId  = null;
+let popupTimer   = null;
 
-const copyIcon  = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
-const checkIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+const copyIcon   = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
+const checkIcon  = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+const pencilIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
 
 function setStatus(type, text) {
-  status.className = 'sync-status ' + type;
-  status.textContent = text;
+  statusEl.className = 'sync-status ' + type;
+  statusEl.textContent = text;
 }
 
 // ── skinissues ──
 function renderIssues() {
-  // Remove all issue items (keep the + button)
   issuesList.querySelectorAll('.issue-item').forEach(el => el.remove());
-
   state.issues.forEach((val, i) => {
     const item = document.createElement('div');
     item.className = 'issue-item';
-
     const input = document.createElement('input');
     input.className = 'issue-input';
     input.type = 'text';
     input.placeholder = 'e.g. acne, dryness…';
     input.value = val;
     input.addEventListener('input', () => { state.issues[i] = input.value; scheduleSave(); });
-
     const del = document.createElement('button');
     del.className = 'issue-delete';
-    del.title = 'Remove';
     del.textContent = '×';
     del.addEventListener('click', () => {
       state.issues.splice(i, 1);
       if (state.issues.length === 0) state.issues = [''];
-      renderIssues();
-      scheduleSave();
+      renderIssues(); scheduleSave();
     });
-
     item.appendChild(input);
     item.appendChild(del);
     issuesList.insertBefore(item, issueAdd);
   });
 }
-
 issueAdd.addEventListener('click', () => {
   state.issues.push('');
   renderIssues();
-  // Focus the new input
   const inputs = issuesList.querySelectorAll('.issue-input');
   if (inputs.length) inputs[inputs.length - 1].focus();
 });
 
-// ── Popup ──
+// ── Photo popup (on long press of thumbnail) ──
 function showPopup(imgSrc, anchorEl) {
   popupImg.src = imgSrc;
   popup.classList.add('visible');
   const rect = anchorEl.getBoundingClientRect();
-  const popupW = 320;
-  const popupH = 320;
-  let left = rect.left + rect.width / 2 - popupW / 2 + window.scrollX;
-  let top  = rect.top - popupH - 12 + window.scrollY;
+  const pw = 220, ph = 220;
+  let left = rect.left + rect.width / 2 - pw / 2 + window.scrollX;
+  let top  = rect.top - ph - 12 + window.scrollY;
   if (left < 8) left = 8;
-  if (left + popupW > window.innerWidth - 8) left = window.innerWidth - popupW - 8;
+  if (left + pw > window.innerWidth - 8) left = window.innerWidth - pw - 8;
   if (top < 8 + window.scrollY) top = rect.bottom + 12 + window.scrollY;
   popup.style.left = left + 'px';
   popup.style.top  = top  + 'px';
 }
 function hidePopup() {
-  clearTimeout(pressTimer);
-  pressTimer = null;
-  popup.classList.remove('visible');
-  popupImg.src = '';
+  clearTimeout(popupTimer); popupTimer = null;
+  popup.classList.remove('visible'); popupImg.src = '';
 }
+document.addEventListener('mouseup',   hidePopup);
+document.addEventListener('touchend',  hidePopup);
+document.addEventListener('touchmove', hidePopup, { passive: true });
 
-// ── Long press ──
 function attachLongPress(wrap, imgSrc) {
-  function startPress() {
-    wasLongPress = false;
-    clearTimeout(pressTimer);
-    pressTimer = setTimeout(() => { wasLongPress = true; showPopup(imgSrc, wrap); }, 500);
-  }
-  function cancelPress() { clearTimeout(pressTimer); pressTimer = null; }
-
-  wrap.addEventListener('mousedown', startPress);
-  wrap.addEventListener('mousemove', cancelPress);
-  wrap.addEventListener('mouseup', () => {
-    cancelPress();
-    if (wasLongPress) { hidePopup(); wasLongPress = false; }
-    else { openModal(wrap.dataset.id); }
+  wrap.addEventListener('mousedown', e => {
+    popupTimer = setTimeout(() => showPopup(imgSrc, wrap), 500);
   });
-  wrap.addEventListener('mouseleave', () => { cancelPress(); if (wasLongPress) { hidePopup(); wasLongPress = false; } });
-
-  wrap.addEventListener('touchstart', startPress, { passive: true });
-  wrap.addEventListener('touchmove',  () => { cancelPress(); hidePopup(); wasLongPress = false; }, { passive: true });
-  wrap.addEventListener('touchend',   () => {
-    if (wasLongPress) { hidePopup(); wasLongPress = false; }
-    else { cancelPress(); openModal(wrap.dataset.id); }
-  });
+  wrap.addEventListener('mousemove', () => { clearTimeout(popupTimer); popupTimer = null; });
+  wrap.addEventListener('touchstart', e => {
+    const t = e.touches[0];
+    popupTimer = setTimeout(() => showPopup(imgSrc, wrap), 500);
+  }, { passive: true });
 }
 
 // ── Table ──
-function renderTable() {
+function saveComments() {
   tbody.querySelectorAll('tr[data-id]').forEach(tr => {
     const ta = tr.querySelector('textarea');
     if (ta) state.comments[tr.dataset.id] = ta.value;
   });
-  tbody.innerHTML = '';
+}
 
-  state.order.forEach(id => {
+function moveRow(id, dir) {
+  saveComments();
+  const idx = state.order.indexOf(id);
+  const newIdx = idx + dir;
+  if (newIdx < 0 || newIdx >= state.order.length) return;
+  [state.order[idx], state.order[newIdx]] = [state.order[newIdx], state.order[idx]];
+  renderTable();
+  scheduleSave();
+}
+
+function renderTable() {
+  saveComments();
+  tbody.innerHTML = '';
+  countEl.textContent = state.order.length + ' product' + (state.order.length !== 1 ? 's' : '');
+
+  state.order.forEach((id, idx) => {
     const p = byId[id];
     if (!p) return;
     const tr = document.createElement('tr');
     tr.dataset.id = id;
-    tr.draggable = true;
 
-    // Handle
-    const tdH = document.createElement('td');
-    tdH.className = 'drag-handle';
-    tdH.innerHTML = '&#8597;';
-    tr.appendChild(tdH);
+    // Move buttons
+    const tdM = document.createElement('td');
+    tdM.className = 'move-cell';
+    const btnUp = document.createElement('button');
+    btnUp.className = 'move-btn';
+    btnUp.innerHTML = '▲';
+    btnUp.title = 'Move up';
+    btnUp.disabled = idx === 0;
+    btnUp.addEventListener('click', () => moveRow(id, -1));
+    const btnDown = document.createElement('button');
+    btnDown.className = 'move-btn';
+    btnDown.innerHTML = '▼';
+    btnDown.title = 'Move down';
+    btnDown.disabled = idx === state.order.length - 1;
+    btnDown.addEventListener('click', () => moveRow(id, 1));
+    tdM.appendChild(btnUp);
+    tdM.appendChild(btnDown);
+    tr.appendChild(tdM);
 
-    // Name
+    // Name + copy
     const tdN = document.createElement('td');
     tdN.innerHTML = `<div class="name-wrap"><span class="name">${p.name}</span><button class="copy-btn" title="Copy name">${copyIcon}</button></div><span class="brand">${p.brand}</span>`;
     tdN.querySelector('.copy-btn').addEventListener('click', e => {
@@ -464,21 +477,31 @@ function renderTable() {
     });
     tr.appendChild(tdN);
 
-    // Image
+    // Image — thumbnail only for viewing; pencil button to edit
     const tdI = document.createElement('td');
     tdI.className = 'img-cell';
+    const area = document.createElement('div');
+    area.className = 'img-area';
     const wrap = document.createElement('div');
     wrap.className = 'img-wrapper';
-    wrap.dataset.id = id;
     const imgSrc = state.images[id];
     if (imgSrc) {
-      wrap.innerHTML = `<img src="${imgSrc}" alt="${p.name}"><div class="img-overlay"><span>Change photo</span></div>`;
+      wrap.innerHTML = `<img src="${imgSrc}" alt="${p.name}">`;
       attachLongPress(wrap, imgSrc);
     } else {
-      wrap.innerHTML = `<span class="img-fallback">${p.brand}</span><div class="img-overlay"><span>Add photo</span></div>`;
-      wrap.addEventListener('click', () => openModal(id));
+      wrap.innerHTML = `<span class="img-fallback">${p.brand}</span>`;
     }
-    tdI.appendChild(wrap);
+    area.appendChild(wrap);
+
+    // Pencil / edit button below thumbnail
+    const editBtn = document.createElement('button');
+    editBtn.className = 'edit-photo-btn';
+    editBtn.innerHTML = pencilIcon + (imgSrc ? ' edit' : ' add');
+    editBtn.title = imgSrc ? 'Change photo' : 'Add photo';
+    editBtn.addEventListener('click', () => openModal(id));
+    area.appendChild(editBtn);
+
+    tdI.appendChild(area);
     tr.appendChild(tdI);
 
     // Desc
@@ -498,44 +521,6 @@ function renderTable() {
     tr.appendChild(tdC);
 
     tbody.appendChild(tr);
-  });
-
-  initDrag();
-}
-
-// ── Drag ──
-let dragSrc = null;
-function initDrag() {
-  tbody.addEventListener('dragstart', e => {
-    if (!e.target.closest('.drag-handle')) { e.preventDefault(); return; }
-    dragSrc = e.target.closest('tr');
-    if (!dragSrc) return;
-    dragSrc.classList.add('dragging');
-    e.dataTransfer.effectAllowed = 'move';
-  });
-  tbody.addEventListener('dragend', () => {
-    document.querySelectorAll('.dragging,.drag-over').forEach(el => el.classList.remove('dragging','drag-over'));
-    dragSrc = null;
-  });
-  tbody.addEventListener('dragover', e => {
-    e.preventDefault();
-    const t = e.target.closest('tr');
-    if (!t || t === dragSrc) return;
-    document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
-    t.classList.add('drag-over');
-  });
-  tbody.addEventListener('dragleave', e => { const t = e.target.closest('tr'); if (t) t.classList.remove('drag-over'); });
-  tbody.addEventListener('drop', e => {
-    e.preventDefault();
-    const t = e.target.closest('tr');
-    if (!t || t === dragSrc || !dragSrc) return;
-    t.classList.remove('drag-over');
-    const rows = [...tbody.querySelectorAll('tr')];
-    const si = rows.indexOf(dragSrc), ti = rows.indexOf(t);
-    if (si < ti) tbody.insertBefore(dragSrc, t.nextSibling);
-    else tbody.insertBefore(dragSrc, t);
-    state.order = [...tbody.querySelectorAll('tr[data-id]')].map(r => r.dataset.id);
-    scheduleSave();
   });
 }
 
@@ -574,7 +559,6 @@ function scheduleSave() {
   clearTimeout(saveTimer);
   saveTimer = setTimeout(async () => {
     try {
-      // Collect current issue values
       issuesList.querySelectorAll('.issue-input').forEach((inp, i) => { state.issues[i] = inp.value; });
       await setDoc(REF, { order: state.order, comments: state.comments, images: state.images, issues: state.issues, updatedAt: Date.now() });
       setStatus('saved', 'Saved ✓');
@@ -586,9 +570,9 @@ function scheduleSave() {
 }
 
 onSnapshot(REF, snap => {
-  if (!snap.exists()) { setStatus('', ''); renderTable(); renderIssues(); return; }
+  if (!snap.exists()) { state.order = [...ALL_IDS]; renderTable(); renderIssues(); setStatus('', ''); return; }
   const data = snap.data();
-  state.order    = data.order    || state.order;
+  state.order    = mergeOrder(data.order);
   state.comments = data.comments || {};
   state.images   = data.images   || {};
   state.issues   = data.issues   || [''];
