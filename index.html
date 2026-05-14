@@ -570,9 +570,6 @@ saveBtn.addEventListener('click', () => {
 modalBg.addEventListener('click', e => { if (e.target === modalBg) { modalBg.classList.remove('open'); activeImgId = null; } });
 
 // ── Firebase ──
-let isSaving = false;
-let lastSavedAt = 0;
-
 function scheduleSave() {
   setStatus('saving', 'Saving...');
   clearTimeout(saveTimer);
@@ -584,40 +581,59 @@ function scheduleSave() {
   issuesList.querySelectorAll('.issue-input').forEach((inp, i) => { state.issues[i] = inp.value; });
   saveTimer = setTimeout(async () => {
     try {
-      isSaving = true;
       const ts = Date.now();
-      lastSavedAt = ts;
+      localSaveTs = ts;
       await setDoc(REF, { order: state.order, comments: state.comments, images: state.images, issues: state.issues, updatedAt: ts });
       setStatus('saved', 'Saved ✓');
       setTimeout(() => setStatus('', ''), 2500);
     } catch(e) {
       setStatus('error', 'Save failed');
-    } finally {
-      isSaving = false;
     }
   }, 800);
 }
 
+let firstLoad = true;
+let localSaveTs = 0;
+
 onSnapshot(REF, snap => {
-  if (!snap.exists()) { state.order = [...ALL_IDS]; renderTable(); renderIssues(); setStatus('', ''); return; }
+  if (!snap.exists()) {
+    if (firstLoad) { firstLoad = false; renderTable(); renderIssues(); }
+    setStatus('', '');
+    return;
+  }
   const data = snap.data();
-  // Skip re-render if this snapshot is from our own recent save (within 3s)
-  const isOwnSave = data.updatedAt && (data.updatedAt === lastSavedAt || (Date.now() - data.updatedAt < 3000 && isSaving));
-  const newOrder = mergeOrder(data.order);
-  // Always update order and images; only update comments/issues if not our own save
-  state.order  = newOrder;
-  state.images = data.images || {};
-  if (!isOwnSave) {
+  const remoteTs = data.updatedAt || 0;
+
+  if (firstLoad) {
+    // Initial load — populate everything from Firebase
+    firstLoad = false;
+    state.order    = mergeOrder(data.order);
     state.comments = data.comments || {};
+    state.images   = data.images   || {};
     state.issues   = data.issues   || [''];
-    setStatus('saved', 'Synced ✓');
-    setTimeout(() => setStatus('', ''), 2000);
     renderTable();
     renderIssues();
-  } else {
+    setStatus('', '');
+    return;
+  }
+
+  // Subsequent snapshots — only act if it's a REMOTE change (not our own save)
+  if (remoteTs <= localSaveTs) {
+    // Our own save echoed back — just update status, don't re-render
     setStatus('saved', 'Saved ✓');
     setTimeout(() => setStatus('', ''), 2000);
+    return;
   }
+
+  // Genuine remote update from cosmetologist — sync everything
+  state.order    = mergeOrder(data.order);
+  state.comments = data.comments || {};
+  state.images   = data.images   || {};
+  state.issues   = data.issues   || [''];
+  setStatus('saved', 'Synced ✓');
+  setTimeout(() => setStatus('', ''), 2000);
+  renderTable();
+  renderIssues();
 }, () => setStatus('error', 'Connection error'));
 
 renderTable();
