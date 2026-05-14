@@ -59,6 +59,7 @@
     letter-spacing: 1.5px;
     font-weight: 500;
     text-align: left;
+    user-select: none;
   }
   thead th.img-head { text-align: center; width: 96px; }
   thead th.drag-head { width: 32px; }
@@ -66,19 +67,28 @@
   tbody tr {
     border-bottom: 1px solid #f0ece6;
     transition: background 0.12s;
+    user-select: text;
+    -webkit-user-select: text;
   }
   tbody tr:last-child { border-bottom: none; }
   tbody tr:hover { background: #faf8f5; }
   tbody tr.dragging { opacity: 0.4; background: #f0ece6; }
   tbody tr.drag-over { background: #eef5ff; border-top: 2px solid #7aaaff; }
 
-  td { padding: 12px 16px; vertical-align: middle; font-size: 0.86rem; }
+  td {
+    padding: 12px 16px;
+    vertical-align: middle;
+    font-size: 0.86rem;
+    user-select: text;
+    -webkit-user-select: text;
+  }
 
   .drag-handle {
     cursor: grab;
     color: #ccc;
     font-size: 1.1rem;
     user-select: none;
+    -webkit-user-select: none;
     text-align: center;
     padding: 12px 6px;
     transition: color 0.15s;
@@ -86,10 +96,22 @@
   .drag-handle:hover { color: #888; }
   .drag-handle:active { cursor: grabbing; }
 
-  .name { font-weight: 600; font-size: 0.9rem; color: #111; }
-  .brand { font-size: 0.72rem; color: #aaa; display: block; margin-top: 3px; }
+  .name {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #111;
+    user-select: text;
+    -webkit-user-select: text;
+  }
+  .brand {
+    font-size: 0.72rem;
+    color: #aaa;
+    display: block;
+    margin-top: 3px;
+    user-select: text;
+    -webkit-user-select: text;
+  }
 
-  /* Image cell */
   .img-cell { text-align: center; padding: 8px 4px; width: 96px; }
   .img-wrapper {
     width: 68px; height: 68px;
@@ -102,6 +124,8 @@
     cursor: pointer;
     border: 2px dashed transparent;
     transition: border-color 0.2s;
+    user-select: none;
+    -webkit-user-select: none;
   }
   .img-wrapper:hover { border-color: #ccc; }
   .img-wrapper:hover .img-overlay { opacity: 1; }
@@ -119,7 +143,7 @@
   }
   .img-overlay span { color: #fff; font-size: 0.65rem; font-weight: 600; text-align: center; line-height: 1.4; padding: 4px; }
 
-  /* Image URL modal */
+  /* Modal */
   .modal-bg {
     display: none;
     position: fixed; inset: 0;
@@ -161,7 +185,10 @@
   .btn-save { background: #1a1a1a; color: #fff; }
   .btn-save:disabled { background: #ccc; cursor: not-allowed; }
 
-  .desc { color: #3a3a3a; line-height: 1.56; font-size: 0.83rem; width: 32%; }
+  .desc {
+    color: #3a3a3a; line-height: 1.56; font-size: 0.83rem; width: 32%;
+    user-select: text; -webkit-user-select: text;
+  }
   .comment-cell { padding: 10px 12px; width: 28%; }
   textarea {
     width: 100%; min-height: 62px;
@@ -201,11 +228,10 @@
   </table>
 </div>
 
-<!-- Image URL modal -->
 <div class="modal-bg" id="modalBg">
   <div class="modal">
     <h3>Вставить фото</h3>
-    <p>Найди картинку в интернете, скопируй адрес изображения (правая кнопка мыши → «Копировать адрес изображения») и вставь сюда</p>
+    <p>Найди картинку в интернете, нажми правую кнопку мыши → «Копировать адрес изображения» и вставь сюда</p>
     <input type="text" id="urlInput" placeholder="https://example.com/product.jpg">
     <div class="modal-preview" id="modalPreview">
       <span class="ph">Предпросмотр появится здесь</span>
@@ -219,7 +245,7 @@
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBjvSAXI3_gdJFqgS8ADKFXQ9tGj_KR91Q",
@@ -235,31 +261,25 @@ const db  = getFirestore(app);
 const REF = doc(db, "skincare", "data");
 
 const PRODUCTS = [
-  { id:"anthelios",  name:"Anthelios UVMune 400 SPF50+", brand:"La Roche-Posay",    desc:"SPF50+. Фильтры: Mexoryl 400 (UVA1, до 400нм), Tinosorb S/M (UVA/UVB). Флюид. Без отдушки, без спирта. 50 мл." },
-  { id:"agame",      name:"A-Game⁵ 0.05% Retinal",       brand:"Geek & Gorgeous",   desc:"Ретиналь (ретинальдегид) 0.05%. Альдегидная форма витамина A, прямой предшественник ретиноевой кислоты. 30 мл." },
-  { id:"bbomb",      name:"B-Bomb 10% Niacinamide",       brand:"Geek & Gorgeous",   desc:"Ниацинамид 10% (витамин B3). Ингибирует перенос меланосом, регулирует себопродукцию, укрепляет керамидный барьер. 30 мл." },
-  { id:"apad",       name:"aPAD 20% Azeclair",            brand:"Geek & Gorgeous",   desc:"Азелаиновая кислота 20% (форма Azeclair — потенцированный эфир). Антибактериальное, кератолитическое, депигментирующее действие. 30 мл." },
-  { id:"effezell",   name:"Эффезел гель",                 brand:"Galderma",          desc:"Рецептурный. Адапален 0.1% (ретиноид 3-го поколения) + бензоилпероксид 2.5%. Антикомедонное + антибактериальное." },
-  { id:"retina",     name:"Retin A Renewal Night Cream",  brand:"GIGI Promedic",     desc:"Ретинол (концентрация на упаковке не указана). Ночной крем, профессиональная линия." },
-  { id:"bpo",        name:"Acne Reversing Gel BPO 10%",   brand:"M.A.D Skincare",    desc:"Бензоилпероксид 10%. Антибактериальный окислитель. Высокая концентрация — для точечного нанесения. 30 мл." },
-  { id:"cicaplast",  name:"Cicaplast Baume B5+",          brand:"La Roche-Posay",    desc:"Пантенол (B5), мадекассосид, термальная вода LRP. Без отдушки. Восстановление барьера, ранозаживляющее действие." },
-  { id:"calmdown",   name:"Calm Down 3.2% PHA + 0.8% BHA",brand:"Geek & Gorgeous",  desc:"Глюконолактон 3.2% (PHA) + салициловая кислота 0.8% (BHA). Химический эксфолиант. pH ≈3.5. 100 мл." },
-  { id:"toleriane",  name:"Toleriane Sensitive Fluide",   brand:"La Roche-Posay",    desc:"Термальная вода, нейросенсин, глицерин. Без парабенов, без отдушки. Лёгкий флюид. pH ≈5.5. 40 мл." },
-  { id:"cicaspf",    name:"Cicaplast Baume B5+ SPF50",    brand:"La Roche-Posay",    desc:"Пантенол B5 + мадекассосид + SPF50 (химические фильтры). Восстановление + фотозащита. 40 мл." },
-  { id:"klapp",      name:"Körperlotion Body Lotion",      brand:"KLAPP (Ref. 1834)", desc:"Лосьон для тела. Полный состав не раскрыт. KLAPP Cosmetics GmbH, Hessisch Lichtenau, DE." },
+  { id:"anthelios", name:"Anthelios UVMune 400 SPF50+",    brand:"La Roche-Posay",    desc:"SPF50+. Фильтры: Mexoryl 400 (UVA1, до 400нм), Tinosorb S/M (UVA/UVB). Флюид. Без отдушки, без спирта. 50 мл." },
+  { id:"agame",     name:"A-Game⁵ 0.05% Retinal",          brand:"Geek & Gorgeous",   desc:"Ретиналь (ретинальдегид) 0.05%. Альдегидная форма витамина A, прямой предшественник ретиноевой кислоты. 30 мл." },
+  { id:"bbomb",     name:"B-Bomb 10% Niacinamide",          brand:"Geek & Gorgeous",   desc:"Ниацинамид 10% (витамин B3). Ингибирует перенос меланосом, регулирует себопродукцию, укрепляет керамидный барьер. 30 мл." },
+  { id:"apad",      name:"aPAD 20% Azeclair",               brand:"Geek & Gorgeous",   desc:"Азелаиновая кислота 20% (форма Azeclair — потенцированный эфир). Антибактериальное, кератолитическое, депигментирующее действие. 30 мл." },
+  { id:"effezell",  name:"Эффезел гель",                    brand:"Galderma",          desc:"Рецептурный. Адапален 0.1% (ретиноид 3-го поколения) + бензоилпероксид 2.5%. Антикомедонное + антибактериальное." },
+  { id:"retina",    name:"Retin A Renewal Night Cream",     brand:"GIGI Promedic",     desc:"Ретинол (концентрация на упаковке не указана). Ночной крем, профессиональная линия." },
+  { id:"bpo",       name:"Acne Reversing Gel BPO 10%",      brand:"M.A.D Skincare",    desc:"Бензоилпероксид 10%. Антибактериальный окислитель. Высокая концентрация — для точечного нанесения. 30 мл." },
+  { id:"cicaplast", name:"Cicaplast Baume B5+",             brand:"La Roche-Posay",    desc:"Пантенол (B5), мадекассосид, термальная вода LRP. Без отдушки. Восстановление барьера, ранозаживляющее действие." },
+  { id:"calmdown",  name:"Calm Down 3.2% PHA + 0.8% BHA",  brand:"Geek & Gorgeous",   desc:"Глюконолактон 3.2% (PHA) + салициловая кислота 0.8% (BHA). Химический эксфолиант. pH ≈3.5. 100 мл." },
+  { id:"toleriane", name:"Toleriane Sensitive Fluide",      brand:"La Roche-Posay",    desc:"Термальная вода, нейросенсин, глицерин. Без парабенов, без отдушки. Лёгкий флюид. pH ≈5.5. 40 мл." },
+  { id:"cicaspf",   name:"Cicaplast Baume B5+ SPF50",       brand:"La Roche-Posay",    desc:"Пантенол B5 + мадекассосид + SPF50 (химические фильтры). Восстановление + фотозащита. 40 мл." },
+  { id:"klapp",     name:"Körperlotion Body Lotion",         brand:"KLAPP (Ref. 1834)", desc:"Лосьон для тела. Полный состав не раскрыт. KLAPP Cosmetics GmbH, Hessisch Lichtenau, DE." },
 ];
 
 const byId = {};
 PRODUCTS.forEach(p => byId[p.id] = p);
 
-// State
-let state = {
-  order: PRODUCTS.map(p => p.id),
-  comments: {},
-  images: {}
-};
+let state = { order: PRODUCTS.map(p => p.id), comments: {}, images: {} };
 let saveTimer = null;
-let isRemoteUpdate = false;
 
 const tbody   = document.getElementById('tbody');
 const status  = document.getElementById('syncStatus');
@@ -267,20 +287,17 @@ const modalBg = document.getElementById('modalBg');
 const urlInput= document.getElementById('urlInput');
 const preview = document.getElementById('modalPreview');
 const saveBtn = document.getElementById('modalSave');
-let   activeImgId = null;
+let activeImgId = null;
 
 function setStatus(type, text) {
   status.className = 'sync-status ' + type;
   status.textContent = text;
 }
 
-// ── Build / refresh table ──
 function renderTable() {
-  // Collect current textarea values before re-render
   tbody.querySelectorAll('tr[data-id]').forEach(tr => {
-    const id = tr.dataset.id;
     const ta = tr.querySelector('textarea');
-    if (ta) state.comments[id] = ta.value;
+    if (ta) state.comments[tr.dataset.id] = ta.value;
   });
 
   tbody.innerHTML = '';
@@ -291,15 +308,17 @@ function renderTable() {
     tr.dataset.id = id;
     tr.draggable = true;
 
-    // Handle
+    // Drag handle — only this cell triggers drag
     const tdH = document.createElement('td');
     tdH.className = 'drag-handle';
     tdH.innerHTML = '&#8597;';
+    tdH.addEventListener('mousedown', () => tr.draggable = true);
     tr.appendChild(tdH);
 
     // Name
     const tdN = document.createElement('td');
     tdN.innerHTML = `<span class="name">${p.name}</span><span class="brand">${p.brand}</span>`;
+    tdN.addEventListener('mousedown', e => { tr.draggable = false; });
     tr.appendChild(tdN);
 
     // Image
@@ -307,7 +326,6 @@ function renderTable() {
     tdI.className = 'img-cell';
     const wrap = document.createElement('div');
     wrap.className = 'img-wrapper';
-    wrap.title = 'Нажми чтобы добавить фото';
     const imgSrc = state.images[id];
     if (imgSrc) {
       wrap.innerHTML = `<img src="${imgSrc}" alt="${p.name}"><div class="img-overlay"><span>Сменить фото</span></div>`;
@@ -322,6 +340,7 @@ function renderTable() {
     const tdD = document.createElement('td');
     tdD.className = 'desc';
     tdD.textContent = p.desc;
+    tdD.addEventListener('mousedown', () => { tr.draggable = false; });
     tr.appendChild(tdD);
 
     // Comment
@@ -330,12 +349,15 @@ function renderTable() {
     const ta = document.createElement('textarea');
     ta.placeholder = 'Комментарий…';
     ta.value = state.comments[id] || '';
-    ta.addEventListener('input', () => {
-      state.comments[id] = ta.value;
-      scheduleSave();
-    });
+    ta.addEventListener('mousedown', e => { tr.draggable = false; e.stopPropagation(); });
+    ta.addEventListener('input', () => { state.comments[id] = ta.value; scheduleSave(); });
     tdC.appendChild(ta);
     tr.appendChild(tdC);
+
+    // Re-enable drag only from handle
+    tr.addEventListener('dragstart', e => {
+      if (!tr.draggable) { e.preventDefault(); return; }
+    });
 
     tbody.appendChild(tr);
   });
@@ -343,9 +365,8 @@ function renderTable() {
   initDrag();
 }
 
-// ── Drag-and-drop ──
+// ── Drag ──
 let dragSrc = null;
-
 function initDrag() {
   tbody.addEventListener('dragstart', e => {
     dragSrc = e.target.closest('tr');
@@ -355,6 +376,8 @@ function initDrag() {
   });
   tbody.addEventListener('dragend', () => {
     document.querySelectorAll('.dragging,.drag-over').forEach(el => el.classList.remove('dragging','drag-over'));
+    // Re-enable draggable on all rows
+    tbody.querySelectorAll('tr').forEach(r => r.draggable = true);
     dragSrc = null;
   });
   tbody.addEventListener('dragover', e => {
@@ -377,13 +400,12 @@ function initDrag() {
     const si = rows.indexOf(dragSrc), ti = rows.indexOf(t);
     if (si < ti) tbody.insertBefore(dragSrc, t.nextSibling);
     else tbody.insertBefore(dragSrc, t);
-    // Update order in state
     state.order = [...tbody.querySelectorAll('tr[data-id]')].map(r => r.dataset.id);
     scheduleSave();
   });
 }
 
-// ── Image modal ──
+// ── Modal ──
 function openModal(id) {
   activeImgId = id;
   urlInput.value = state.images[id] || '';
@@ -391,87 +413,53 @@ function openModal(id) {
   modalBg.classList.add('open');
   urlInput.focus();
 }
-
 function updatePreview(url) {
   if (url.trim()) {
-    preview.innerHTML = `<img src="${url.trim()}" onerror="this.parentNode.innerHTML='<span class=ph>Не удалось загрузить изображение</span>'">`;
+    preview.innerHTML = `<img src="${url.trim()}" onerror="this.parentNode.innerHTML='<span class=ph>Не удалось загрузить</span>'">`;
     saveBtn.disabled = false;
   } else {
     preview.innerHTML = '<span class="ph">Предпросмотр появится здесь</span>';
     saveBtn.disabled = true;
   }
 }
-
 urlInput.addEventListener('input', () => updatePreview(urlInput.value));
 urlInput.addEventListener('paste', () => setTimeout(() => updatePreview(urlInput.value), 50));
-
-document.getElementById('modalCancel').addEventListener('click', () => {
-  modalBg.classList.remove('open');
-  activeImgId = null;
-});
-
+document.getElementById('modalCancel').addEventListener('click', () => { modalBg.classList.remove('open'); activeImgId = null; });
 saveBtn.addEventListener('click', () => {
   if (!activeImgId) return;
   const url = urlInput.value.trim();
-  if (url) {
-    state.images[activeImgId] = url;
-    scheduleSave();
-    renderTable();
-  }
-  modalBg.classList.remove('open');
-  activeImgId = null;
+  if (url) { state.images[activeImgId] = url; scheduleSave(); renderTable(); }
+  modalBg.classList.remove('open'); activeImgId = null;
 });
-
-modalBg.addEventListener('click', e => {
-  if (e.target === modalBg) { modalBg.classList.remove('open'); activeImgId = null; }
-});
+modalBg.addEventListener('click', e => { if (e.target === modalBg) { modalBg.classList.remove('open'); activeImgId = null; } });
 
 // ── Firebase ──
 function scheduleSave() {
   setStatus('saving', 'Сохранение...');
   clearTimeout(saveTimer);
-  saveTimer = setTimeout(saveToFirebase, 800);
+  saveTimer = setTimeout(async () => {
+    try {
+      await setDoc(REF, { order: state.order, comments: state.comments, images: state.images, updatedAt: Date.now() });
+      setStatus('saved', 'Сохранено ✓');
+      setTimeout(() => setStatus('', ''), 2500);
+    } catch(e) {
+      setStatus('error', 'Ошибка сохранения');
+    }
+  }, 800);
 }
 
-async function saveToFirebase() {
-  try {
-    await setDoc(REF, {
-      order: state.order,
-      comments: state.comments,
-      images: state.images,
-      updatedAt: Date.now()
-    });
-    setStatus('saved', 'Сохранено ✓');
-    setTimeout(() => setStatus('', ''), 2500);
-  } catch(e) {
-    setStatus('error', 'Ошибка сохранения');
-    console.error(e);
-  }
-}
-
-// Real-time listener
 onSnapshot(REF, snap => {
-  if (!snap.exists()) {
-    setStatus('', '');
-    renderTable();
-    return;
-  }
+  if (!snap.exists()) { setStatus('', ''); renderTable(); return; }
   const data = snap.data();
-  // Ignore if it's our own save (within 2s)
   state.order    = data.order    || state.order;
   state.comments = data.comments || {};
   state.images   = data.images   || {};
   setStatus('saved', 'Синхронизировано ✓');
   setTimeout(() => setStatus('', ''), 2000);
   renderTable();
-}, err => {
-  setStatus('error', 'Ошибка подключения');
-  console.error(err);
-});
+}, () => setStatus('error', 'Ошибка подключения'));
 
-// Initial render while waiting for Firebase
 renderTable();
-setStatus('', 'Подключение...');
 </script>
 </body>
 </html>
