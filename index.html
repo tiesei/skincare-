@@ -1,1 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>skinstuff</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #f5f2ee;
+    font-family: 'DM Sans', sans-serif;
+    color: #1a1a1a;
+    min-height: 100vh;
+    padding: 40px 20px;
+  }
+  h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 32px;
+    letter-spacing: -0.5px;
+  }
 
+  /* ── skinissues ── */
+  .issues-wrap {
+    max-width: 1100px;
+    margin: 0 auto 24px;
+  }
+  .issues-label {
+    font-size: 0.71rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 500;
+    color: #b08080;
+    margin-bottom: 8px;
+    padding-left: 2px;
+  }
+  .issues-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+  .issue-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #fdf0ee;
+    border: 1.5px solid #f0d0cc;
+    border-radius: 10px;
+    padding: 6px 10px 6px 12px;
+  }
+  .issue-input {
+    border: none;
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.83rem;
+    color: #5a3030;
+    outline: none;
+    width: 160px;
+    min-width: 80px;
+  }
+  .issue-input::placeholder { color: #d0a8a4; font-style: italic; }
+  .issue-delete {
+    background: none; border: none; cursor: pointer;
+    color: #d0a8a4; font-size: 1rem; line-height: 1;
+    padding: 0 2px; transition: color 0.15s;
+    display: flex; align-items: center;
+  }
+  .issue-delete:hover { color: #c0605a; }
+  .issue-add {
+    background: none;
+    border: 1.5px dashed #d0b8b4;
+    border-radius: 10px;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    color: #c0907a;
+    transition: border-color 0.15s, color 0.15s;
+    line-height: 1;
+  }
+  .issue-add:hover { border-color: #b07870; color: #a05848; }
+
+  /* ── table header ── */
+  .table-header {
+    max-width: 1100px;
+    margin: 0 auto 6px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+  .product-count {
+    font-size: 0.75rem;
+    color: #aaa;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding-left: 64px;
+  }
+  .sync-status {
+    font-size: 0.75rem;
+    color: #aaa;
+    transition: color 0.3s;
+    height: 18px;
+  }
+  .sync-status.saving { color: #f0a500; }
+  .sync-status.saved  { color: #4caf50; }
+  .sync-status.error  { color: #e53935; }
+
+  /* ── table ── */
+  .table-wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 32px rgba(0,0,0,0.07);
+  }
+  table { width: 100%; border-collapse: collapse; }
+  thead tr { background: #1a1a1a; color: #fff; }
+  thead th {
+    padding: 13px 16px;
+    font-size: 0.71rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 500;
+    text-align: left;
+  }
+  thead th.img-head { text-align: center; width: 112px; }
+  thead th.drag-head { width: 32px; }
+  tbody tr {
+    border-bottom: 1px solid #f0ece6;
+    transition: background 0.12s;
+  }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: #faf8f5; }
+  tbody tr.dragging { opacity: 0.4; background: #f0ece6; }
+  tbody tr.drag-over { background: #eef5ff; border-top: 2px solid #7aaaff; }
+  td { padding: 12px 16px; vertical-align: middle; font-size: 0.86rem; }
+  .drag-handle {
+    cursor: grab; color: #ccc; font-size: 1.1rem;
+    user-select: none; -webkit-user-select: none;
+    text-align: center; padding: 12px 6px; transition: color 0.15s;
+  }
+  .drag-handle:hover { color: #888; }
+  .drag-handle:active { cursor: grabbing; }
+  .name-wrap { display: flex; align-items: center; gap: 7px; }
+  .name { font-weight: 600; font-size: 0.9rem; color: #111; }
+  .brand { font-size: 0.72rem; color: #aaa; display: block; margin-top: 3px; }
+  .copy-btn {
+    flex-shrink: 0; background: none; border: none; cursor: pointer;
+    padding: 3px; color: #ccc; transition: color 0.15s;
+    display: flex; align-items: center; border-radius: 4px;
+  }
+  .copy-btn:hover { color: #888; }
+  .copy-btn.copied { color: #4caf50; }
+  .copy-btn svg { width: 14px; height: 14px; }
+  .img-cell { text-align: center; padding: 8px 4px; width: 112px; }
+  .img-wrapper {
+    width: 82px; height: 82px; margin: 0 auto;
+    border-radius: 10px; background: #f0ede9;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden; position: relative; cursor: pointer;
+    border: 2px dashed transparent; transition: border-color 0.2s;
+    user-select: none; -webkit-user-select: none;
+  }
+  .img-wrapper:hover { border-color: #ccc; }
+  .img-wrapper:hover .img-overlay { opacity: 1; }
+  .img-wrapper img { width: 100%; height: 100%; object-fit: contain; padding: 3px; }
+  .img-fallback { font-size: 0.6rem; font-weight: 700; color: #bbb; text-align: center; line-height: 1.4; padding: 6px; }
+  .img-overlay {
+    position: absolute; inset: 0; background: rgba(0,0,0,0.45);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity 0.2s; border-radius: 8px;
+  }
+  .img-overlay span { color: #fff; font-size: 0.65rem; font-weight: 600; text-align: center; line-height: 1.4; padding: 4px; }
+
+  /* photo popup */
+  .photo-popup {
+    position: fixed; z-index: 2000;
+    background: #fff; border-radius: 14px; padding: 10px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.22);
+    pointer-events: none; display: none;
+  }
+  .photo-popup.visible { display: block; }
+  .photo-popup img { display: block; max-width: 300px; max-height: 300px; object-fit: contain; border-radius: 6px; }
+
+  /* modal */
+  .modal-bg {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.4); z-index: 1000;
+    align-items: center; justify-content: center;
+  }
+  .modal-bg.open { display: flex; }
+  .modal {
+    background: #fff; border-radius: 14px; padding: 28px 28px 24px;
+    width: 420px; max-width: 95vw; box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+  }
+  .modal h3 { font-size: 1rem; margin-bottom: 6px; }
+  .modal p { font-size: 0.8rem; color: #888; margin-bottom: 14px; }
+  .modal input {
+    width: 100%; padding: 9px 12px; border: 1.5px solid #e0dbd4;
+    border-radius: 8px; font-size: 0.85rem; outline: none; margin-bottom: 10px;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .modal input:focus { border-color: #a09080; }
+  .modal-preview {
+    width: 100%; height: 120px; background: #f5f2ee; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 14px; overflow: hidden;
+  }
+  .modal-preview img { max-width: 100%; max-height: 100%; object-fit: contain; }
+  .modal-preview .ph { font-size: 0.75rem; color: #bbb; }
+  .modal-btns { display: flex; gap: 8px; justify-content: flex-end; }
+  .btn { padding: 8px 18px; border-radius: 8px; border: none; cursor: pointer; font-size: 0.83rem; font-family: 'DM Sans', sans-serif; font-weight: 500; }
+  .btn-cancel { background: #f0ece6; color: #555; }
+  .btn-save { background: #1a1a1a; color: #fff; }
+  .btn-save:disabled { background: #ccc; cursor: not-allowed; }
+  .desc { color: #3a3a3a; line-height: 1.56; font-size: 0.83rem; width: 32%; }
+  .comment-cell { padding: 10px 12px; width: 28%; }
+  textarea {
+    width: 100%; min-height: 62px; border: 1.5px solid #e5e1db; border-radius: 8px;
+    padding: 8px 10px; font-family: 'DM Sans', sans-serif; font-size: 0.82rem;
+    color: #333; background: #fdfcfa; resize: vertical; outline: none;
+    transition: border-color 0.2s; line-height: 1.5;
+  }
+  textarea:focus { border-color: #a09080; background: #fff; }
+  textarea::placeholder { color: #ccc; font-style: italic; }
+</style>
+</head>
+<body>
+
+<h1>skinstuff</h1>
+
+<!-- skinissues -->
+<div class="issues-wrap">
+  <div class="issues-label">skinissues</div>
+  <div class="issues-list" id="issuesList">
+    <button class="issue-add" id="issueAdd" title="Add issue">＋</button>
+  </div>
+</div>
+
+<div class="table-header">
+  <span class="product-count" id="productCount">13 products</span>
+  <span class="sync-status" id="syncStatus">Connecting...</span>
+</div>
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th class="drag-head"></th>
+        <th style="width:18%">Product</th>
+        <th class="img-head">Photo</th>
+        <th>Ingredients / action</th>
+        <th>Cosmetologist notes</th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+</div>
+
+<div class="photo-popup" id="photoPopup">
+  <img id="photoPopupImg" src="" alt="">
+</div>
+
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <h3>Add photo</h3>
+    <p>Find the product image online, right-click → "Copy image address" and paste it below</p>
+    <input type="text" id="urlInput" placeholder="https://example.com/product.jpg">
+    <div class="modal-preview" id="modalPreview">
+      <span class="ph">Preview will appear here</span>
+    </div>
+    <div class="modal-btns">
+      <button class="btn btn-cancel" id="modalCancel">Cancel</button>
+      <button class="btn btn-save" id="modalSave" disabled>Save</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBjvSAXI3_gdJFqgS8ADKFXQ9tGj_KR91Q",
+  authDomain: "skincare-5a676.firebaseapp.com",
+  projectId: "skincare-5a676",
+  storageBucket: "skincare-5a676.firebasestorage.app",
+  messagingSenderId: "1078913962018",
+  appId: "1:1078913962018:web:485f0f699f2ae73c88ba7b"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+const REF = doc(db, "skincare", "data");
+
+const PRODUCTS = [
+  { id:"anthelios", name:"Anthelios UVMune 400 SPF50+",    brand:"La Roche-Posay",    desc:"SPF50+. Filters: Mexoryl 400 (UVA1, up to 400nm), Tinosorb S/M (UVA/UVB). Fluid texture. Fragrance-free, alcohol-free. 50 ml." },
+  { id:"agame",     name:"A-Game⁵ 0.05% Retinal",          brand:"Geek & Gorgeous",   desc:"Retinal (retinaldehyde) 0.05%. Aldehyde form of vitamin A, direct precursor to retinoic acid. 30 ml." },
+  { id:"bbomb",     name:"B-Bomb 10% Niacinamide",          brand:"Geek & Gorgeous",   desc:"Niacinamide 10% (vitamin B3). Inhibits melanosome transfer, regulates sebum production, strengthens ceramide barrier. 30 ml." },
+  { id:"apad",      name:"aPAD 20% Azeclair",               brand:"Geek & Gorgeous",   desc:"Azelaic acid 20% (Azeclair form — potentiated ester). Antibacterial, keratolytic, depigmenting action. 30 ml." },
+  { id:"effezell",  name:"Effezell Gel",                    brand:"Galderma",          desc:"Prescription. Adapalene 0.1% (3rd-gen retinoid) + benzoyl peroxide 2.5%. Comedolytic + antibacterial." },
+  { id:"retina",    name:"Retin A Renewal Night Cream",     brand:"GIGI Promedic",     desc:"Retinol (concentration not stated on packaging). Night cream, professional line." },
+  { id:"bpo",       name:"Acne Reversing Gel BPO 10%",      brand:"M.A.D Skincare",    desc:"Benzoyl peroxide 10%. Antibacterial oxidizer. High concentration — for spot application. 30 ml." },
+  { id:"cicaplast", name:"Cicaplast Baume B5+",             brand:"La Roche-Posay",    desc:"Panthenol (B5), madecassoside, LRP thermal water. Fragrance-free. Barrier repair, wound-healing action." },
+  { id:"calmdown",  name:"Calm Down 3.2% PHA + 0.8% BHA",  brand:"Geek & Gorgeous",   desc:"Gluconolactone 3.2% (PHA) + salicylic acid 0.8% (BHA). Chemical exfoliant. pH ≈3.5. 100 ml." },
+  { id:"toleriane", name:"Toleriane Sensitive Fluide",      brand:"La Roche-Posay",    desc:"Thermal water, neurosensine, glycerin. Paraben-free, fragrance-free. Light fluid. pH ≈5.5. 40 ml." },
+  { id:"cicaspf",   name:"Cicaplast Baume B5+ SPF50",       brand:"La Roche-Posay",    desc:"Panthenol B5 + madecassoside + SPF50 (chemical filters). Barrier repair + UV protection. 40 ml." },
+  { id:"klapp",     name:"Körperlotion Body Lotion",         brand:"KLAPP (Ref. 1834)", desc:"Body moisturiser. Full ingredient list not disclosed. KLAPP Cosmetics GmbH, Hessisch Lichtenau, DE." },
+  { id:"pyunkang",  name:"Pyunkang Yul Essence Toner",      brand:"Pyunkang Yul",      desc:"Astragalus root extract 91.3%. Hydrating essence-toner. Fragrance-free, dye-free, hypoallergenic. 200 ml." },
+];
+
+const byId = {};
+PRODUCTS.forEach(p => byId[p.id] = p);
+
+let state = { order: PRODUCTS.map(p => p.id), comments: {}, images: {}, issues: [''] };
+let saveTimer  = null;
+let pressTimer = null;
+let wasLongPress = false;
+
+const tbody    = document.getElementById('tbody');
+const status   = document.getElementById('syncStatus');
+const modalBg  = document.getElementById('modalBg');
+const urlInput = document.getElementById('urlInput');
+const preview  = document.getElementById('modalPreview');
+const saveBtn  = document.getElementById('modalSave');
+const popup    = document.getElementById('photoPopup');
+const popupImg = document.getElementById('photoPopupImg');
+const issuesList = document.getElementById('issuesList');
+const issueAdd   = document.getElementById('issueAdd');
+let activeImgId = null;
+
+const copyIcon  = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
+const checkIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+
+function setStatus(type, text) {
+  status.className = 'sync-status ' + type;
+  status.textContent = text;
+}
+
+// ── skinissues ──
+function renderIssues() {
+  // Remove all issue items (keep the + button)
+  issuesList.querySelectorAll('.issue-item').forEach(el => el.remove());
+
+  state.issues.forEach((val, i) => {
+    const item = document.createElement('div');
+    item.className = 'issue-item';
+
+    const input = document.createElement('input');
+    input.className = 'issue-input';
+    input.type = 'text';
+    input.placeholder = 'e.g. acne, dryness…';
+    input.value = val;
+    input.addEventListener('input', () => { state.issues[i] = input.value; scheduleSave(); });
+
+    const del = document.createElement('button');
+    del.className = 'issue-delete';
+    del.title = 'Remove';
+    del.textContent = '×';
+    del.addEventListener('click', () => {
+      state.issues.splice(i, 1);
+      if (state.issues.length === 0) state.issues = [''];
+      renderIssues();
+      scheduleSave();
+    });
+
+    item.appendChild(input);
+    item.appendChild(del);
+    issuesList.insertBefore(item, issueAdd);
+  });
+}
+
+issueAdd.addEventListener('click', () => {
+  state.issues.push('');
+  renderIssues();
+  // Focus the new input
+  const inputs = issuesList.querySelectorAll('.issue-input');
+  if (inputs.length) inputs[inputs.length - 1].focus();
+});
+
+// ── Popup ──
+function showPopup(imgSrc, anchorEl) {
+  popupImg.src = imgSrc;
+  popup.classList.add('visible');
+  const rect = anchorEl.getBoundingClientRect();
+  const popupW = 320;
+  const popupH = 320;
+  let left = rect.left + rect.width / 2 - popupW / 2 + window.scrollX;
+  let top  = rect.top - popupH - 12 + window.scrollY;
+  if (left < 8) left = 8;
+  if (left + popupW > window.innerWidth - 8) left = window.innerWidth - popupW - 8;
+  if (top < 8 + window.scrollY) top = rect.bottom + 12 + window.scrollY;
+  popup.style.left = left + 'px';
+  popup.style.top  = top  + 'px';
+}
+function hidePopup() {
+  clearTimeout(pressTimer);
+  pressTimer = null;
+  popup.classList.remove('visible');
+  popupImg.src = '';
+}
+
+// ── Long press ──
+function attachLongPress(wrap, imgSrc) {
+  function startPress() {
+    wasLongPress = false;
+    clearTimeout(pressTimer);
+    pressTimer = setTimeout(() => { wasLongPress = true; showPopup(imgSrc, wrap); }, 500);
+  }
+  function cancelPress() { clearTimeout(pressTimer); pressTimer = null; }
+
+  wrap.addEventListener('mousedown', startPress);
+  wrap.addEventListener('mousemove', cancelPress);
+  wrap.addEventListener('mouseup', () => {
+    cancelPress();
+    if (wasLongPress) { hidePopup(); wasLongPress = false; }
+    else { openModal(wrap.dataset.id); }
+  });
+  wrap.addEventListener('mouseleave', () => { cancelPress(); if (wasLongPress) { hidePopup(); wasLongPress = false; } });
+
+  wrap.addEventListener('touchstart', startPress, { passive: true });
+  wrap.addEventListener('touchmove',  () => { cancelPress(); hidePopup(); wasLongPress = false; }, { passive: true });
+  wrap.addEventListener('touchend',   () => {
+    if (wasLongPress) { hidePopup(); wasLongPress = false; }
+    else { cancelPress(); openModal(wrap.dataset.id); }
+  });
+}
+
+// ── Table ──
+function renderTable() {
+  tbody.querySelectorAll('tr[data-id]').forEach(tr => {
+    const ta = tr.querySelector('textarea');
+    if (ta) state.comments[tr.dataset.id] = ta.value;
+  });
+  tbody.innerHTML = '';
+
+  state.order.forEach(id => {
+    const p = byId[id];
+    if (!p) return;
+    const tr = document.createElement('tr');
+    tr.dataset.id = id;
+    tr.draggable = true;
+
+    // Handle
+    const tdH = document.createElement('td');
+    tdH.className = 'drag-handle';
+    tdH.innerHTML = '&#8597;';
+    tr.appendChild(tdH);
+
+    // Name
+    const tdN = document.createElement('td');
+    tdN.innerHTML = `<div class="name-wrap"><span class="name">${p.name}</span><button class="copy-btn" title="Copy name">${copyIcon}</button></div><span class="brand">${p.brand}</span>`;
+    tdN.querySelector('.copy-btn').addEventListener('click', e => {
+      e.stopPropagation();
+      navigator.clipboard.writeText(p.name).then(() => {
+        const btn = e.currentTarget;
+        btn.innerHTML = checkIcon; btn.classList.add('copied');
+        setTimeout(() => { btn.innerHTML = copyIcon; btn.classList.remove('copied'); }, 1500);
+      });
+    });
+    tr.appendChild(tdN);
+
+    // Image
+    const tdI = document.createElement('td');
+    tdI.className = 'img-cell';
+    const wrap = document.createElement('div');
+    wrap.className = 'img-wrapper';
+    wrap.dataset.id = id;
+    const imgSrc = state.images[id];
+    if (imgSrc) {
+      wrap.innerHTML = `<img src="${imgSrc}" alt="${p.name}"><div class="img-overlay"><span>Change photo</span></div>`;
+      attachLongPress(wrap, imgSrc);
+    } else {
+      wrap.innerHTML = `<span class="img-fallback">${p.brand}</span><div class="img-overlay"><span>Add photo</span></div>`;
+      wrap.addEventListener('click', () => openModal(id));
+    }
+    tdI.appendChild(wrap);
+    tr.appendChild(tdI);
+
+    // Desc
+    const tdD = document.createElement('td');
+    tdD.className = 'desc';
+    tdD.textContent = p.desc;
+    tr.appendChild(tdD);
+
+    // Comment
+    const tdC = document.createElement('td');
+    tdC.className = 'comment-cell';
+    const ta = document.createElement('textarea');
+    ta.placeholder = 'Notes…';
+    ta.value = state.comments[id] || '';
+    ta.addEventListener('input', () => { state.comments[id] = ta.value; scheduleSave(); });
+    tdC.appendChild(ta);
+    tr.appendChild(tdC);
+
+    tbody.appendChild(tr);
+  });
+
+  initDrag();
+}
+
+// ── Drag ──
+let dragSrc = null;
+function initDrag() {
+  tbody.addEventListener('dragstart', e => {
+    if (!e.target.closest('.drag-handle')) { e.preventDefault(); return; }
+    dragSrc = e.target.closest('tr');
+    if (!dragSrc) return;
+    dragSrc.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+  });
+  tbody.addEventListener('dragend', () => {
+    document.querySelectorAll('.dragging,.drag-over').forEach(el => el.classList.remove('dragging','drag-over'));
+    dragSrc = null;
+  });
+  tbody.addEventListener('dragover', e => {
+    e.preventDefault();
+    const t = e.target.closest('tr');
+    if (!t || t === dragSrc) return;
+    document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+    t.classList.add('drag-over');
+  });
+  tbody.addEventListener('dragleave', e => { const t = e.target.closest('tr'); if (t) t.classList.remove('drag-over'); });
+  tbody.addEventListener('drop', e => {
+    e.preventDefault();
+    const t = e.target.closest('tr');
+    if (!t || t === dragSrc || !dragSrc) return;
+    t.classList.remove('drag-over');
+    const rows = [...tbody.querySelectorAll('tr')];
+    const si = rows.indexOf(dragSrc), ti = rows.indexOf(t);
+    if (si < ti) tbody.insertBefore(dragSrc, t.nextSibling);
+    else tbody.insertBefore(dragSrc, t);
+    state.order = [...tbody.querySelectorAll('tr[data-id]')].map(r => r.dataset.id);
+    scheduleSave();
+  });
+}
+
+// ── Modal ──
+function openModal(id) {
+  if (!id) return;
+  activeImgId = id;
+  urlInput.value = state.images[id] || '';
+  updatePreview(urlInput.value);
+  modalBg.classList.add('open');
+  urlInput.focus();
+}
+function updatePreview(url) {
+  if (url.trim()) {
+    preview.innerHTML = `<img src="${url.trim()}" onerror="this.parentNode.innerHTML='<span class=ph>Could not load image</span>'">`;
+    saveBtn.disabled = false;
+  } else {
+    preview.innerHTML = '<span class="ph">Preview will appear here</span>';
+    saveBtn.disabled = true;
+  }
+}
+urlInput.addEventListener('input', () => updatePreview(urlInput.value));
+urlInput.addEventListener('paste', () => setTimeout(() => updatePreview(urlInput.value), 50));
+document.getElementById('modalCancel').addEventListener('click', () => { modalBg.classList.remove('open'); activeImgId = null; });
+saveBtn.addEventListener('click', () => {
+  if (!activeImgId) return;
+  const url = urlInput.value.trim();
+  if (url) { state.images[activeImgId] = url; scheduleSave(); renderTable(); }
+  modalBg.classList.remove('open'); activeImgId = null;
+});
+modalBg.addEventListener('click', e => { if (e.target === modalBg) { modalBg.classList.remove('open'); activeImgId = null; } });
+
+// ── Firebase ──
+function scheduleSave() {
+  setStatus('saving', 'Saving...');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(async () => {
+    try {
+      // Collect current issue values
+      issuesList.querySelectorAll('.issue-input').forEach((inp, i) => { state.issues[i] = inp.value; });
+      await setDoc(REF, { order: state.order, comments: state.comments, images: state.images, issues: state.issues, updatedAt: Date.now() });
+      setStatus('saved', 'Saved ✓');
+      setTimeout(() => setStatus('', ''), 2500);
+    } catch(e) {
+      setStatus('error', 'Save failed');
+    }
+  }, 800);
+}
+
+onSnapshot(REF, snap => {
+  if (!snap.exists()) { setStatus('', ''); renderTable(); renderIssues(); return; }
+  const data = snap.data();
+  state.order    = data.order    || state.order;
+  state.comments = data.comments || {};
+  state.images   = data.images   || {};
+  state.issues   = data.issues   || [''];
+  setStatus('saved', 'Synced ✓');
+  setTimeout(() => setStatus('', ''), 2000);
+  renderTable();
+  renderIssues();
+}, () => setStatus('error', 'Connection error'));
+
+renderTable();
+renderIssues();
+</script>
+</body>
+</html>
