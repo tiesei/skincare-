@@ -35,6 +35,7 @@
     color: #b08080;
     margin-bottom: 8px;
   }
+
   .issues-list {
     display: flex;
     flex-wrap: wrap;
@@ -55,6 +56,8 @@
     font-family: 'DM Sans', sans-serif;
     font-size: 0.83rem; color: #5a3030; outline: none;
     width: 140px; min-width: 60px;
+    resize: none; overflow: hidden;
+    line-height: 1.4; padding: 0; min-height: 1.2em;
   }
   .issue-input::placeholder { color: #d0a8a4; font-style: italic; }
   .issue-delete {
@@ -237,7 +240,7 @@
 <h1>skinstuff</h1>
 
 <div class="issues-wrap">
-  <div class="issues-label">skinissues</div>
+  <div class="issues-label">issues</div>
   <div class="issues-list" id="issuesList">
     <button class="issue-add" id="issueAdd">＋</button>
   </div>
@@ -354,18 +357,28 @@ function setStatus(type, text) {
   statusEl.textContent = text;
 }
 
-// ── skinissues ──
+// ── issues ──
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = el.scrollHeight + 'px';
+}
+
 function renderIssues() {
   issuesList.querySelectorAll('.issue-item').forEach(el => el.remove());
   state.issues.forEach((val, i) => {
     const item = document.createElement('div');
     item.className = 'issue-item';
-    const input = document.createElement('input');
+    const input = document.createElement('textarea');
     input.className = 'issue-input';
-    input.type = 'text';
     input.placeholder = 'e.g. acne, dryness…';
     input.value = val;
-    input.addEventListener('input', () => { state.issues[i] = input.value; scheduleSave(); });
+    input.rows = 1;
+    setTimeout(() => autoResize(input), 0);
+    input.addEventListener('input', () => {
+      autoResize(input);
+      state.issues[i] = input.value;
+      scheduleSave();
+    });
     const del = document.createElement('button');
     del.className = 'issue-delete';
     del.textContent = '×';
