@@ -18,25 +18,31 @@
     font-family: 'DM Serif Display', serif;
     font-size: 2rem;
     text-align: center;
-    margin-bottom: 8px;
+    margin-bottom: 32px;
     letter-spacing: -0.5px;
   }
-  .subtitle {
-    text-align: center;
-    font-size: 0.82rem;
-    color: #888;
-    margin-bottom: 12px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
+
+  .table-header {
+    max-width: 1100px;
+    margin: 0 auto 6px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+  .product-count {
+    font-size: 0.75rem;
+    color: #aaa;
     font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    /* align with product column: drag col (32px) + padding (16px) */
+    padding-left: 64px;
   }
   .sync-status {
-    text-align: center;
     font-size: 0.75rem;
-    margin-bottom: 28px;
-    height: 18px;
     color: #aaa;
     transition: color 0.3s;
+    height: 18px;
   }
   .sync-status.saving { color: #f0a500; }
   .sync-status.saved  { color: #4caf50; }
@@ -93,14 +99,9 @@
 
   .copy-btn {
     flex-shrink: 0;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 3px;
-    color: #ccc;
-    transition: color 0.15s;
-    display: flex; align-items: center;
-    border-radius: 4px;
+    background: none; border: none; cursor: pointer;
+    padding: 3px; color: #ccc; transition: color 0.15s;
+    display: flex; align-items: center; border-radius: 4px;
   }
   .copy-btn:hover { color: #888; }
   .copy-btn.copied { color: #4caf50; }
@@ -108,32 +109,24 @@
 
   .img-cell { text-align: center; padding: 8px 4px; width: 96px; }
   .img-wrapper {
-    width: 68px; height: 68px;
-    margin: 0 auto;
-    border-radius: 10px;
-    background: #f0ede9;
+    width: 68px; height: 68px; margin: 0 auto;
+    border-radius: 10px; background: #f0ede9;
     display: flex; align-items: center; justify-content: center;
-    overflow: hidden;
-    position: relative;
-    cursor: pointer;
-    border: 2px dashed transparent;
-    transition: border-color 0.2s;
-    user-select: none;
-    -webkit-user-select: none;
+    overflow: hidden; position: relative; cursor: pointer;
+    border: 2px dashed transparent; transition: border-color 0.2s;
+    user-select: none; -webkit-user-select: none;
   }
   .img-wrapper:hover { border-color: #ccc; }
   .img-wrapper:hover .img-overlay { opacity: 1; }
   .img-wrapper img { width: 100%; height: 100%; object-fit: contain; padding: 3px; }
   .img-fallback { font-size: 0.6rem; font-weight: 700; color: #bbb; text-align: center; line-height: 1.4; padding: 6px; }
   .img-overlay {
-    position: absolute; inset: 0;
-    background: rgba(0,0,0,0.45);
+    position: absolute; inset: 0; background: rgba(0,0,0,0.45);
     display: flex; align-items: center; justify-content: center;
     opacity: 0; transition: opacity 0.2s; border-radius: 8px;
   }
   .img-overlay span { color: #fff; font-size: 0.65rem; font-weight: 600; text-align: center; line-height: 1.4; padding: 4px; }
 
-  /* Modal */
   .modal-bg {
     display: none; position: fixed; inset: 0;
     background: rgba(0,0,0,0.4); z-index: 1000;
@@ -180,8 +173,11 @@
 <body>
 
 <h1>skinstuff</h1>
-<p class="subtitle">12 products · skincare routine</p>
-<p class="sync-status" id="syncStatus">Connecting...</p>
+
+<div class="table-header">
+  <span class="product-count" id="productCount">12 products</span>
+  <span class="sync-status" id="syncStatus">Connecting...</span>
+</div>
 
 <div class="table-wrap">
   <table>
@@ -259,7 +255,7 @@ const preview = document.getElementById('modalPreview');
 const saveBtn = document.getElementById('modalSave');
 let activeImgId = null;
 
-const copyIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
+const copyIcon  = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
 const checkIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
 
 function setStatus(type, text) {
@@ -287,7 +283,7 @@ function renderTable() {
     tdH.innerHTML = '&#8597;';
     tr.appendChild(tdH);
 
-    // Name + copy button
+    // Name + copy
     const tdN = document.createElement('td');
     tdN.innerHTML = `
       <div class="name-wrap">
@@ -364,9 +360,7 @@ function initDrag() {
     document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
     t.classList.add('drag-over');
   });
-  tbody.addEventListener('dragleave', e => {
-    const t = e.target.closest('tr'); if (t) t.classList.remove('drag-over');
-  });
+  tbody.addEventListener('dragleave', e => { const t = e.target.closest('tr'); if (t) t.classList.remove('drag-over'); });
   tbody.addEventListener('drop', e => {
     e.preventDefault();
     const t = e.target.closest('tr');
