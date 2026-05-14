@@ -314,6 +314,8 @@ const PRODUCTS = [
   { id:"klapp",     name:"Körperlotion Body Lotion",         brand:"KLAPP (Ref. 1834)", desc:"Body moisturiser. Full ingredient list not disclosed. KLAPP Cosmetics GmbH, Hessisch Lichtenau, DE." },
   { id:"pyunkang",  name:"Pyunkang Yul Essence Toner",      brand:"Pyunkang Yul",      desc:"Astragalus root extract 91.3%. Hydrating essence-toner. Fragrance-free, dye-free, hypoallergenic. 200 ml." },
   { id:"eucerin",   name:"AtopiControl Rich Calming Lotion", brand:"Eucerin",           desc:"Licocalcone A + ceramides. Daily body lotion for very dry to atopic skin. Nourishes, soothes itching, prolongs flare-up free phase. 400 ml." },
+  { id:"lrpgel",   name:"Toleriane Foaming Gel Mousse",     brand:"La Roche-Posay",    desc:"Amino acid complex, LRP thermal water. Dual-action: cleanses + hydrates. Fragrance-free, sulfate-free. Sensitive to ultra-sensitive skin. 400 ml." },
+  { id:"cerave",   name:"Foaming Cleanser",                 brand:"CeraVe",            desc:"Ceramides NP/AP/EOP + hyaluronic acid + niacinamide. Foaming gel. Fragrance-free, non-comedogenic. Normal to oily skin. 236 ml." },
 ];
 
 const ALL_IDS = PRODUCTS.map(p => p.id);
@@ -555,17 +557,30 @@ saveBtn.addEventListener('click', () => {
 modalBg.addEventListener('click', e => { if (e.target === modalBg) { modalBg.classList.remove('open'); activeImgId = null; } });
 
 // ── Firebase ──
+let isSaving = false;
+let lastSavedAt = 0;
+
 function scheduleSave() {
   setStatus('saving', 'Saving...');
   clearTimeout(saveTimer);
+  // Collect current textarea values into state before saving
+  tbody.querySelectorAll('tr[data-id]').forEach(tr => {
+    const ta = tr.querySelector('textarea');
+    if (ta) state.comments[tr.dataset.id] = ta.value;
+  });
+  issuesList.querySelectorAll('.issue-input').forEach((inp, i) => { state.issues[i] = inp.value; });
   saveTimer = setTimeout(async () => {
     try {
-      issuesList.querySelectorAll('.issue-input').forEach((inp, i) => { state.issues[i] = inp.value; });
-      await setDoc(REF, { order: state.order, comments: state.comments, images: state.images, issues: state.issues, updatedAt: Date.now() });
+      isSaving = true;
+      const ts = Date.now();
+      lastSavedAt = ts;
+      await setDoc(REF, { order: state.order, comments: state.comments, images: state.images, issues: state.issues, updatedAt: ts });
       setStatus('saved', 'Saved ✓');
       setTimeout(() => setStatus('', ''), 2500);
     } catch(e) {
       setStatus('error', 'Save failed');
+    } finally {
+      isSaving = false;
     }
   }, 800);
 }
@@ -573,14 +588,23 @@ function scheduleSave() {
 onSnapshot(REF, snap => {
   if (!snap.exists()) { state.order = [...ALL_IDS]; renderTable(); renderIssues(); setStatus('', ''); return; }
   const data = snap.data();
-  state.order    = mergeOrder(data.order);
-  state.comments = data.comments || {};
-  state.images   = data.images   || {};
-  state.issues   = data.issues   || [''];
-  setStatus('saved', 'Synced ✓');
-  setTimeout(() => setStatus('', ''), 2000);
-  renderTable();
-  renderIssues();
+  // Skip re-render if this snapshot is from our own recent save (within 3s)
+  const isOwnSave = data.updatedAt && (data.updatedAt === lastSavedAt || (Date.now() - data.updatedAt < 3000 && isSaving));
+  const newOrder = mergeOrder(data.order);
+  // Always update order and images; only update comments/issues if not our own save
+  state.order  = newOrder;
+  state.images = data.images || {};
+  if (!isOwnSave) {
+    state.comments = data.comments || {};
+    state.issues   = data.issues   || [''];
+    setStatus('saved', 'Synced ✓');
+    setTimeout(() => setStatus('', ''), 2000);
+    renderTable();
+    renderIssues();
+  } else {
+    setStatus('saved', 'Saved ✓');
+    setTimeout(() => setStatus('', ''), 2000);
+  }
 }, () => setStatus('error', 'Connection error'));
 
 renderTable();
